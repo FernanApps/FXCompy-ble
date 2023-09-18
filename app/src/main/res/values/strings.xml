@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Compy-ble</string>
+    <string name="search_in_compyble">Search in Compy-ble</string>
+
+    <string name="home">Home</string>
+    <string name="list">List</string>
+    <string name="email">Email</string>
+    <string name="settings">Settings</string>
+    <string name="category">Category</string>
+    <string name="offers">Offers</string>
+    <string name="favorite">Favorite</string>
+    <string name="clear_all_history">Clear all history</string>
+    <string name="close_search">Close Search</string>
 </resources>
