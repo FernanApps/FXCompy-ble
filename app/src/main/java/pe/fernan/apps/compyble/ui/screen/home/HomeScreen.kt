@@ -1,59 +1,41 @@
-package pe.fernan.apps.compyble.ui.home
+package pe.fernan.apps.compyble.ui.screen.home
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.repeatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.sharp.Favorite
-import androidx.compose.material.icons.sharp.FavoriteBorder
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,12 +45,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -76,125 +54,155 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.ehsanmsz.mszprogressindicator.progressindicator.BallClipRotateMultipleProgressIndicator
+import com.ehsanmsz.mszprogressindicator.progressindicator.BallScaleRippleMultipleProgressIndicator
 import pe.fernan.apps.compyble.R
+import pe.fernan.apps.compyble.data.remote.home.HomeRepositoryImp
+import pe.fernan.apps.compyble.di.NetworkModule
+import pe.fernan.apps.compyble.domain.model.Advertisement
+import pe.fernan.apps.compyble.domain.model.Data
+import pe.fernan.apps.compyble.domain.model.Product
+import pe.fernan.apps.compyble.domain.model.Slider
+import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
+import pe.fernan.apps.compyble.ui.composables.bounceClick
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
+import pe.fernan.apps.compyble.utils.fixImage
+import pe.fernan.apps.compyble.utils.getColorByNameOrDefault
 
-
-val productTopList = listOf(
-
-    ProductTop(
-        "Apple iPhone 11 64GB 4GB Purpura",
-        "APPLE",
-        "Y enteráte de las últimas ofertas",
-        "https://mercury.vteximg.com.br/arquivos/ids/10156232/image-f97e710146224892965f40db094c25c8.jpg?v=638024265344500000",
-        "-33%",
-        "S/.2,249"
-    ),
-    ProductTop(
-        "Apple iPhone 11 64GB 4GB Purpura",
-        "APPLE",
-        "Y enteráte de las últimas ofertas",
-        "https://mercury.vteximg.com.br/arquivos/ids/10156232/image-f97e710146224892965f40db094c25c8.jpg?v=638024265344500000",
-        "-33%",
-        "S/.2,249"
-    ),
-    ProductTop(
-        "Apple iPhone 11 64GB 4GB Purpura",
-        "APPLE",
-        "Y enteráte de las últimas ofertas",
-        "https://mercury.vteximg.com.br/arquivos/ids/10156232/image-f97e710146224892965f40db094c25c8.jpg?v=638024265344500000",
-        "-33%",
-        "S/.2,249"
-    ),
-    ProductTop(
-        "Apple iPhone 11 64GB 4GB Purpura",
-        "APPLE",
-        "Y enteráte de las últimas ofertas",
-        "https://mercury.vteximg.com.br/arquivos/ids/10156232/image-f97e710146224892965f40db094c25c8.jpg?v=638024265344500000",
-        "-33%",
-        "S/.2,249"
-    ),
-    ProductTop(
-        "Apple iPhone 11 64GB 4GB Purpura",
-        "APPLE",
-        "Y enteráte de las últimas ofertas",
-        "https://mercury.vteximg.com.br/arquivos/ids/10156232/image-f97e710146224892965f40db094c25c8.jpg?v=638024265344500000",
-        "-33%",
-        "S/.2,249"
-    )
-
-)
-
-val advertisements = listOf(
-    Advertisement(
-        "https://compy.pe/img/thumbnail/telegram.webp"
-    ),
-    Advertisement(
-        "https://compy.pe/img/thumbnail/minimos.webp"
-    ),
-    Advertisement(
-        "https://compy.pe/img/thumbnail/fechascyber.webp"
-    ),
-)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hiltViewModel()) {
+
+    val data: Data? by viewModel.getData.collectAsStateWithLifecycle(null)
+
+    val infoDialog = remember { mutableStateOf(true) }
+
+    if (data != null) {
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            //.verticalScroll(rememberScrollState())
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+
+            ) {
+
+            item {
+                SearchBar()
+                Spacer(Modifier.size(10.dp))
+
+                if (data?.banner?.isNotEmpty() == true) {
+                    AsyncImage(
+                        model = data!!.banner,
+                        contentDescription = null,
+                    )
+                    Spacer(Modifier.size(15.dp))
+                }
+                Sliders(data?.sliders ?: listOf())
+                Advertisements(data?.advertisements ?: listOf())
+            }
+
+            // TopProducts()
+            if (data?.productCategories?.isNotEmpty() == true) {
+                val firstElement = data?.productCategories?.firstOrNull()
+                if (firstElement != null) {
+                    item {
+                        Spacer(Modifier.size(15.dp))
+                        HeaderTitle(title = firstElement.first)
+
+                    }
+
+                    items(firstElement.second.windowed(2, 2, true)) { subList ->
+                        Row(Modifier.fillMaxWidth()) {
+                            subList.forEach { product ->
+                                ProductCard(product = product, modifier = Modifier.weight(1f)) {
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                if (data!!.productCategories.size >= 2) {
+                    val lastList = data!!.productCategories.drop(1)
+                    items(lastList) {
+                        CategoryProduct(it)
+                        Spacer(modifier = Modifier.size(15.dp))
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.size(45.dp))
+                    }
+
+                }
 
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
-        //.verticalScroll(rememberScrollState())
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+            }
 
-        ) {
 
-        item {
-            SearchBar()
-            Spacer(Modifier.size(10.dp))
-            AsyncImage(
-                model = "https://compy.pe/img/thumbnail/nano-menu_diasoh-rp-mobile.png",
-                contentDescription = null,
-            )
-            Spacer(Modifier.size(15.dp))
-            Sliders()
-            Advertisements(advertisements)
         }
 
-        // TopProducts()
-        item {
-            Spacer(Modifier.size(15.dp))
-            HeaderTitle(title = stringResource(id = R.string.top_products))
 
-        }
+        if (infoDialog.value) {
+            if (data?.popup != null) {
 
-        items(productTopList.windowed(2, 2, true)) { subList ->
-            Row(Modifier.fillMaxWidth()) {
-                subList.forEach { product ->
-                    ProductCard(product = product, modifier = Modifier.weight(1f)) {
+                Dialog(onDismissRequest = {
 
+                }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .bounceClick(0.85f) {
+                                infoDialog.value = false
+                            },
+                        contentAlignment = Alignment.Center,
+                    ) {
+
+                        AsyncImage(
+                            model = data!!.popup!!.imageUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(15.dp))
+                                .background(Color.White),
+                            contentScale = ContentScale.FillBounds
+                        )
+
+                        /*
+                        AsyncImage(
+                            model = data!!.popup!!.imageUrl,
+                            modifier = Modifier.fillMaxSize()
+                                .clip(RoundedCornerShape(50.dp)
+                                ),
+                            contentDescription = null,
+                        )
+                        */
                     }
                 }
             }
 
         }
 
-        items(specialProductList) {
-            SpecialProduct(it)
-            Spacer(modifier = Modifier.size(15.dp))
+    } else {
+        Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ){
+            BallClipRotateMultipleProgressIndicator(
+                modifier = Modifier.size(100.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
         }
-
-        item{
-            Spacer(modifier = Modifier.size(45.dp))
-        }
-
     }
-
 
 
 }
@@ -214,15 +222,9 @@ fun HeaderTitle(title: String) {
     )
 }
 
-val specialProductList = listOf(
-    "LAS MÁS BUSCADAS" to productTopList,
-    "LAS MEJORES" to productTopList,
-    "LAS INSUPERABLES" to productTopList,
-)
-
 
 @Composable
-fun SpecialProduct(pair: Pair<String, List<ProductTop>>) {
+fun CategoryProduct(pair: Pair<String, List<Product>>) {
     HeaderTitle(title = pair.first)
     Spacer(modifier = Modifier.height(10.dp))
     LazyRow(
@@ -243,10 +245,10 @@ fun SpecialProduct(pair: Pair<String, List<ProductTop>>) {
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(CircleShape)
+                        .bounceClick()
                         .border(width = 0.4.dp, Color.Black, CircleShape)
                         .background(Color.White)
-                        .padding(15.dp)
-                        .bounceClick(),
+                        .padding(15.dp),
                     contentScale = ContentScale.Inside
                 )
                 Spacer(modifier = Modifier.size(5.dp))
@@ -258,21 +260,8 @@ fun SpecialProduct(pair: Pair<String, List<ProductTop>>) {
 }
 
 
-class Advertisement(
-    val imageUrl: String
-)
-
-data class ProductTop(
-    val title: String,
-    val brand: String,
-    val description: String,
-    val imageUrl: String,
-    val discount: String,
-    val price: String
-)
-
 @Composable
-fun ProductCard(product: ProductTop, modifier: Modifier, onItemClick: () -> Unit) {
+fun ProductCard(product: Product, modifier: Modifier, onItemClick: () -> Unit) {
 
     Column(
         modifier = modifier.padding(16.dp),
@@ -288,7 +277,9 @@ fun ProductCard(product: ProductTop, modifier: Modifier, onItemClick: () -> Unit
                 .align(Alignment.End)
                 .padding(horizontal = 12.5.dp, vertical = 2.5.dp)
         )
-        Box(modifier = Modifier.padding(0.dp)) {
+        Box(modifier = Modifier
+            .padding(0.dp)
+            .bounceClick()) {
 
 
             AsyncImage(
@@ -334,7 +325,7 @@ fun ProductCard(product: ProductTop, modifier: Modifier, onItemClick: () -> Unit
 }
 
 @Composable
-fun ProductInformation(product: ProductTop) {
+fun ProductInformation(product: Product) {
     Text(
         text = product.brand.uppercase(),
         fontSize = 12.sp,
@@ -351,7 +342,7 @@ fun ProductInformation(product: ProductTop) {
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = product.price,
+        text = product.priceFormat,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
     )
@@ -379,7 +370,7 @@ fun Advertisements(advertisements: List<Advertisement>) {
 fun AdCard(advertisement: Advertisement) {
 
     AsyncImage(
-        model = advertisement.imageUrl,
+        model = advertisement.imageUrl.fixImage(),
         contentDescription = null,
         modifier = Modifier
             .width(220.dp)
@@ -394,32 +385,34 @@ fun AdCard(advertisement: Advertisement) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Sliders() {
-    val state = rememberPagerState { 10 }
+fun Sliders(sliders: List<Slider>) {
 
-    val colorList = listOf(
-        Color.Red,
-        Color.Gray,
-        Color.Magenta,
-        Color.Black,
-        Color.Blue
-    )
+    if (sliders.isEmpty()) return
 
+    val state = rememberPagerState { sliders.size - 1 }
+
+    val colorPrimary = MaterialTheme.colorScheme.primary
 
     HorizontalPager(
         state = state,
         modifier = Modifier.fillMaxWidth(0.7f),
     ) { page ->
+        val slider = sliders[page]
+        val backgroundColor = getColorByNameOrDefault(slider.backgroundColor) ?: colorPrimary
+        val buttonColor = getColorByNameOrDefault(slider.buttonColor) ?: colorPrimary
         Column(
             modifier = Modifier
                 .padding(25.dp)
-                .background(colorList.random(), RoundedCornerShape(25.dp))
+                .background(
+                    backgroundColor,
+                    RoundedCornerShape(25.dp)
+                )
                 .fillMaxWidth()
                 .aspectRatio(1f / 1.5f),
         ) {
 
             Text(
-                text = "Más poder en tus manos",
+                text = slider.title,
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,
@@ -427,9 +420,15 @@ fun Sliders() {
             )
             Button(
                 modifier = Modifier.padding(start = 25.dp),
-                onClick = { }, shape = RoundedCornerShape(50.dp)
+                onClick = { }, shape = RoundedCornerShape(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor
+                )
             ) {
-                Text(text = "Mundo Gammer")
+                Text(
+                    text = slider.description,
+                    color = if (buttonColor == Color.White) Color.Black else Color.White
+                )
             }
             Box(
                 modifier = Modifier
@@ -438,7 +437,7 @@ fun Sliders() {
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = "https://compy.pe/img/thumbnail/macbook.png",
+                    model = slider.image.fixImage(),
                     contentDescription = null,
                 )
 
@@ -527,194 +526,39 @@ fun SearchBar() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PrevHomeScreen() {
+
+    val interceptor = NetworkModule.provideLoggingInterceptor()
+    val okHttpClient = NetworkModule.provideHttpClient(interceptor)
+    val retrofit = NetworkModule.provideRetrofitInstance(okHttpClient)
+    val api = NetworkModule.provideMovieApi(retrofit)
+
+    val homeRepository = HomeRepositoryImp(api)
+    val getHomeDataUseCase = GetHomeDataUseCase(homeRepository)
+    val viewModel = HomeViewModel(getHomeDataUseCase)
+    val navController = rememberNavController()
+
     FXCompybleTheme {
-        val navController = rememberNavController()
-        HomeScreen(navController)
+        HomeScreen(navController, viewModel)
     }
+
+
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PrevProductTop() {
+fun PrevLoading(){
     FXCompybleTheme {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            //.verticalScroll(rememberScrollState())
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-
-            ) {
-            items(productTopList) { product ->
-                //ProductCard(productTop = product) {
-
-                //}
-            }
-
-
-        }
-    }
-}
-
-@Preview
-@Composable
-fun TestIcon(){
-    Column() {
-
-        Icon(
-            imageVector = Icons.Outlined.FavoriteBorder,
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(8.dp),
-        )
-
-        Icon(
-            imageVector = Icons.Filled.FavoriteBorder,
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(8.dp),
-        )
-        Icon(
-            imageVector = Icons.Sharp.FavoriteBorder,
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(8.dp),
+        BallClipRotateMultipleProgressIndicator(
+            modifier = Modifier.size(60.dp),
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
 
 
-// Test Ripple
-@Preview
-@Composable
-fun TestPulsateEffect() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Button(
-            onClick = {
-                // clicked
-            },
-            shape = RoundedCornerShape(12.dp),
-            contentPadding = PaddingValues(16.dp),
-            modifier = Modifier.bounceClick()
-        ) {
-            Text(text = "Click me - bounceClick")
-        }
-        Spacer(modifier = Modifier.size(20.dp))
-
-        Button(
-            onClick = {
-                //Clicked
-            }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(16.dp),
-            modifier = Modifier.pressClickEffect()
-        ) {
-            Text(text = "Click me - pressClickEffect")
-        }
-
-        Spacer(modifier = Modifier.size(20.dp))
-
-        Button(onClick = {
-            //Clicked
-        }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(16.dp),
-            modifier = Modifier.shakeClickEffect()) {
-            Text(text = "Click me - shakeClickEffect")
-        }
-
-    }
-
-}
-
-// Thanks You https://blog.canopas.com/jetpack-compose-cool-button-click-effects-c6bbecec7bcb
-enum class ButtonState { Pressed, Idle }
-
-fun Modifier.bounceClick() = composed {
-    var buttonState by remember { mutableStateOf(ButtonState.Idle) }
-    val scale by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0.70f else 1f)
-
-    this
-        .graphicsLayer {
-            scaleX = scale
-            scaleY = scale
-        }
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { }
-        )
-        .pointerInput(buttonState) {
-            awaitPointerEventScope {
-                buttonState = if (buttonState == ButtonState.Pressed) {
-                    waitForUpOrCancellation()
-                    ButtonState.Idle
-                } else {
-                    awaitFirstDown(false)
-                    ButtonState.Pressed
-                }
-            }
-        }
-}
-
-fun Modifier.pressClickEffect() = composed {
-    var buttonState by remember { mutableStateOf(ButtonState.Idle) }
-    val ty by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0f else -20f)
-
-    this
-        .graphicsLayer {
-            translationY = ty
-        }
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { }
-        )
-        .pointerInput(buttonState) {
-            awaitPointerEventScope {
-                buttonState = if (buttonState == ButtonState.Pressed) {
-                    waitForUpOrCancellation()
-                    ButtonState.Idle
-                } else {
-                    awaitFirstDown(false)
-                    ButtonState.Pressed
-                }
-            }
-        }
-}
 
 
-fun Modifier.shakeClickEffect() = composed {
-    var buttonState by remember { mutableStateOf(ButtonState.Idle) }
 
-    val tx by animateFloatAsState(
-        targetValue = if (buttonState == ButtonState.Pressed) 0f else -50f,
-        animationSpec = repeatable(
-            iterations = 2,
-            animation = tween(durationMillis = 50, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-    this
-        .graphicsLayer {
-            translationX = tx
-        }
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { }
-        )
-        .pointerInput(buttonState) {
-            awaitPointerEventScope {
-                buttonState = if (buttonState == ButtonState.Pressed) {
-                    waitForUpOrCancellation()
-                    ButtonState.Idle
-                } else {
-                    awaitFirstDown(false)
-                    ButtonState.Pressed
-                }
-            }
-        }
-}
+
+

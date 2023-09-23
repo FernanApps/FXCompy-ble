@@ -1,4 +1,4 @@
-package pe.fernan.apps.compyble.ui.splash
+package pe.fernan.apps.compyble.ui.screen.splash
 
 import android.content.Intent
 import androidx.compose.animation.core.animateFloatAsState

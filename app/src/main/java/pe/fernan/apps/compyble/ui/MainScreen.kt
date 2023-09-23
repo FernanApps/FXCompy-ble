@@ -27,12 +27,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import pe.fernan.apps.compyble.ui.favorite.FavoriteScreen
-import pe.fernan.apps.compyble.ui.home.HomeScreen
-import pe.fernan.apps.compyble.ui.home.category.CategoryScreen
+import pe.fernan.apps.compyble.ui.screen.favorite.FavoriteScreen
+import pe.fernan.apps.compyble.ui.screen.home.HomeScreen
+import pe.fernan.apps.compyble.ui.screen.category.CategoryScreen
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.navigation.bottomNavItems
-import pe.fernan.apps.compyble.ui.offers.OffersScreen
+import pe.fernan.apps.compyble.ui.screen.offers.OffersScreen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

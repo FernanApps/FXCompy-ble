@@ -1,4 +1,4 @@
-package pe.fernan.apps.compyble.ui.home.category
+package pe.fernan.apps.compyble.ui.screen.category
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package pe.fernan.apps.compyble.ui.favorite
+package pe.fernan.apps.compyble.ui.screen.offers
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable
-fun FavoriteScreen(navController: NavHostController) {
+fun OffersScreen(navController: NavHostController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "FavoriteScreen")
+        Text(text = "OffersScreen")
 
     }
 
