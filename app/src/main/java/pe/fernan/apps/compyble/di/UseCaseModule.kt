@@ -4,29 +4,34 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import pe.fernan.apps.compyble.domain.repository.HomeRepository
+import pe.fernan.apps.compyble.domain.repository.CompyRepository
 import pe.fernan.apps.compyble.domain.useCase.GetCategoriesUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
+import pe.fernan.apps.compyble.domain.useCase.GetProductsUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetSortKeysUseCase
-import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {
     @Provides
-    fun provideGetHomeDataUseCase(homeRepository: HomeRepository) = GetHomeDataUseCase(
-        homeRepository
+    fun provideGetHomeDataUseCase(repository: CompyRepository) = GetHomeDataUseCase(
+        repository
     )
 
     @Provides
-    fun provideGetCategoriesUseCase(homeRepository: HomeRepository) = GetCategoriesUseCase(
-        homeRepository
+    fun provideGetCategoriesUseCase(repository: CompyRepository) = GetCategoriesUseCase(
+        repository
     )
 
     @Provides
-    fun provideGetSortKeysUseCase(homeRepository: HomeRepository) = GetSortKeysUseCase(
-        homeRepository
+    fun provideGetSortKeysUseCase(repository: CompyRepository) = GetSortKeysUseCase(
+        repository
+    )
+
+    @Provides
+    fun provideGetProductsUseCase(repository: CompyRepository) = GetProductsUseCase(
+        repository
     )
 
 

@@ -1,19 +1,19 @@
-package pe.fernan.apps.compyble.data.remote.home
+package pe.fernan.apps.compyble.data.remote
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import pe.fernan.apps.compyble.data.remote.CompyApi
 import pe.fernan.apps.compyble.domain.model.Advertisement
 import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.domain.model.Data
 import pe.fernan.apps.compyble.domain.model.Popup
 import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.model.Slider
-import pe.fernan.apps.compyble.domain.repository.HomeRepository
+import pe.fernan.apps.compyble.domain.repository.CompyRepository
 
 
 private val banner = "https://compy.pe/img/thumbnail/nano-menu_diasoh-rp-mobile.png"
@@ -23,7 +23,28 @@ private val popup = Popup(
     imageUrl = "https://compy.pe/img/banner/powersale-shopstar-banner.webp"
 )
 
-class HomeRepositoryImp(private val api: CompyApi) : HomeRepository {
+class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
+    private fun getProduct(element: Element?) = Product(
+        brand = element?.attr("data-product-brand") ?: "",
+        title = element?.attr("data-product-name") ?: "",
+        description = "",
+        price = element?.attr("data-product-price") ?: "",
+        currency = element?.attr("data-product-currency") ?: "",
+        imageUrl = element?.select("picture>img")?.attr("src") ?: "",
+        discount = element?.select("p")?.first()?.select("small")?.text() ?: "",
+        href = element?.attr("href") ?: "",
+    )
+
+    private val productSelectorCSS = "div[class=card-2 c-2-1]"
+    private fun getProducts(doc: Document): List<Product> {
+        val products = doc.select(productSelectorCSS).map {
+            val elementA = it.select("a").first()
+            getProduct(elementA)
+        }
+        return products
+    }
+
+
     override fun getMain() = flow {
 
         val doc = Jsoup.parse(api.getHome().body()!!)
@@ -53,26 +74,11 @@ class HomeRepositoryImp(private val api: CompyApi) : HomeRepository {
 
         val productCategories = mutableListOf<Pair<String, List<Product>>>()
 
-        val selector = "div[class=card-2 c-2-1]"
 
-        fun getProduct(element: Element?) = Product(
-            brand = element?.attr("data-product-brand") ?: "",
-            title = element?.attr("data-product-name") ?: "",
-            description = "",
-            price = element?.attr("data-product-price") ?: "",
-            currency = element?.attr("data-product-currency") ?: "",
-            imageUrl = element?.select("picture>img")?.attr("src") ?: "",
-            discount = element?.select("p")?.first()?.select("small")?.text() ?: "",
-            href = element?.attr("href") ?: "",
-        )
-
-        val productsTop = doc.select(selector).map {
-            val elementA = it.select("a").first()
-            getProduct(elementA)
-        }
+        val productsTop = getProducts(doc)
 
         val productsTopTitle =
-            doc.select(selector).parents().first()?.select("header>h4")?.first()?.text()
+            doc.select(productSelectorCSS).parents().first()?.select("header>h4")?.first()?.text()
                 ?: "Productos Top"
         productCategories.add(productsTopTitle to productsTop)
 
@@ -128,7 +134,7 @@ class HomeRepositoryImp(private val api: CompyApi) : HomeRepository {
 
         }
 
-        val categoryList = categoryMap.map{
+        val categoryList = categoryMap.map {
             Category(it.key, it.value)
         }
         emit(categoryList)
@@ -137,11 +143,14 @@ class HomeRepositoryImp(private val api: CompyApi) : HomeRepository {
 
 
     // https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas
-    override fun getSortKeys(category: String, subCategory: String) = flow{
+    override fun getSortKeys(category: String, subCategory: String) = flow {
 
-        val finalSortKeys = if(sortKeys.isEmpty()){
-            val doc = Jsoup.parse(api.getProducts(category = category, subcategory = subCategory).body()!!)
+        val finalSortKeys = if (sortKeys.isEmpty()) {
+            val doc = Jsoup.parse(
+                api.getProducts(category = category, subcategory = subCategory).body()!!
+            )
             val inputElements = doc.select("form[data-filter-by-sort_form] input[type=radio]")
+            println("Testing getSortKeys $inputElements")
             val inputLabelMap: MutableMap<String, String> = HashMap()
 
             for (inputElement in inputElements) {
@@ -149,24 +158,52 @@ class HomeRepositoryImp(private val api: CompyApi) : HomeRepository {
                 val label = doc.select("label[for=" + inputElement.attr("id") + "]").text()
                 inputLabelMap[value] = label
             }
+            println("Testing inputLabelMap $inputLabelMap")
             inputLabelMap
         } else {
             sortKeys
         }
 
-        emit(finalSortKeys.toMap())
+        sortKeys.putAll(finalSortKeys)
+        println("getSortKeys :: $sortKeys")
+        println("getSortKeys :: ${sortKeys.isEmpty()}")
+        println("getSortKeys :: ${sortKeys.toMap().toList()}")
+
+        emit(sortKeys.toMap().toList())
     }
 
-    override fun getProducts(category: String, subCategory: String, page: Int, sort: String): Flow<List<Product>> = flow {
+    override fun getProducts(
+        category: String,
+        subCategory: String,
+        page: Int,
+        sort: String
+    ): Flow<List<Product>> = flow {
+        println("getProducts Repo init 0" )
 
+        val doc = Jsoup.parse(
+            api.getProducts(
+                category = category,
+                subcategory = subCategory,
+                sort = sort,
+                page = page
+            ).body()!!
+        )
+        println("getProducts Repo init" )
+
+        val products = getProducts(doc)
+        println("getProducts Repo $products" )
+        emit(products)
     }
 
 }
+
 val sortKeys: MutableMap<String, String> = mutableMapOf()
 
 
 fun main() {
-    val doc = Jsoup.connect("https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas").get()
+    val doc =
+        Jsoup.connect("https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas")
+            .get()
     val inputElements = doc.select("form[data-filter-by-sort_form] input[type=radio]")
     val inputLabelMap: MutableMap<String, String> = HashMap()
 
@@ -180,7 +217,7 @@ fun main() {
 
     // Imprimir el mapa
 
-    inputLabelMap.forEach{
+    inputLabelMap.forEach {
         println("Key: ${it.key}, Value: ${it.value}")
     }
 }

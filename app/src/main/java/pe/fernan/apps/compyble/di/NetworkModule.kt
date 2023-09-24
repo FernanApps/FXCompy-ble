@@ -53,14 +53,14 @@ object NetworkModule {
     fun provideLoggingInterceptor(): Interceptor {
         return Interceptor { chain ->
             val request = chain.request()
-            println("Sending request: ${request.url}")
+            println("INTERCEPTOR Sending request: ${request.url}")
 
             val response = chain.proceed(request)
-            println("Received response: ${response.code}")
+            println("INTERCEPTOR Received response: ${response.code}")
 
             val responseBody = response.body
             val responseBodyString = responseBody?.string()
-            println("Response body: $responseBodyString")
+            //println("INTERCEPTOR Response body: $responseBodyString")
 
             response.newBuilder()
                 .body(responseBodyString?.toResponseBody(responseBody.contentType()))

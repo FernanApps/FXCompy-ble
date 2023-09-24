@@ -152,9 +152,9 @@ fun CategoryScreen(
                 }
             }
 
-            if (categorieSelected?.subcategories?.isNotEmpty() == true) {
+            if (categorieSelected != null) {
                 LazyRow(Modifier.fillMaxWidth()) {
-                    items(categorieSelected!!.subcategories!!) { item ->
+                    items(categorieSelected?.subcategories ?: listOf()) { item ->
                         val warmColor = warmColors.random()
                         Box(
                             modifier = Modifier

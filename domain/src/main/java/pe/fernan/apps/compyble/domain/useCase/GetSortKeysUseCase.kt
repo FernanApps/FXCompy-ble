@@ -1,8 +1,8 @@
 package pe.fernan.apps.compyble.domain.useCase
 
-import pe.fernan.apps.compyble.domain.repository.HomeRepository
+import pe.fernan.apps.compyble.domain.repository.CompyRepository
 
-class GetSortKeysUseCase(private val homeRepository: HomeRepository) {
+class GetSortKeysUseCase(private val homeRepository: CompyRepository) {
     operator fun invoke(
         category: String,
         subCategory: String
@@ -11,3 +11,5 @@ class GetSortKeysUseCase(private val homeRepository: HomeRepository) {
         subCategory
     )
 }
+
+

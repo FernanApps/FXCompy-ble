@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -61,9 +62,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.ehsanmsz.mszprogressindicator.progressindicator.BallClipRotateMultipleProgressIndicator
-import com.ehsanmsz.mszprogressindicator.progressindicator.BallScaleRippleMultipleProgressIndicator
 import pe.fernan.apps.compyble.R
-import pe.fernan.apps.compyble.data.remote.home.HomeRepositoryImp
+import pe.fernan.apps.compyble.data.remote.CompyRepositoryImp
 import pe.fernan.apps.compyble.di.NetworkModule
 import pe.fernan.apps.compyble.domain.model.Advertisement
 import pe.fernan.apps.compyble.domain.model.Data
@@ -203,9 +203,6 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 }
 
 
-
-
-
 @Composable
 fun CategoryProduct(pair: Pair<String, List<Product>>) {
     HeaderTitle(title = pair.first)
@@ -244,25 +241,32 @@ fun CategoryProduct(pair: Pair<String, List<Product>>) {
 
 
 @Composable
-fun ProductCard(product: Product, modifier: Modifier, onItemClick: () -> Unit) {
+fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> Unit = {}) {
 
     Column(
         modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+
         Text(
             text = product.discount,
             color = Color.White,
             fontSize = 14.sp,
             modifier = Modifier
+                .alpha(if (product.discount.isEmpty()) 0f else 1f)
                 .background(color = Color.Red, shape = RoundedCornerShape(20.dp))
                 .align(Alignment.End)
                 .padding(horizontal = 12.5.dp, vertical = 2.5.dp)
         )
-        Box(modifier = Modifier
-            .padding(0.dp)
-            .bounceClick()) {
+
+        Box(
+            modifier = Modifier
+                .padding(0.dp)
+                .bounceClick{
+                    onItemClick(product)
+                }
+        ) {
 
 
             AsyncImage(
@@ -515,8 +519,8 @@ fun PrevHomeScreen() {
     val retrofit = NetworkModule.provideRetrofitInstance(okHttpClient)
     val api = NetworkModule.provideMovieApi(retrofit)
 
-    val homeRepository = HomeRepositoryImp(api)
-    val getHomeDataUseCase = GetHomeDataUseCase(homeRepository)
+    val compyRepository = CompyRepositoryImp(api)
+    val getHomeDataUseCase = GetHomeDataUseCase(compyRepository)
     val viewModel = HomeViewModel(getHomeDataUseCase)
     val navController = rememberNavController()
 
@@ -530,7 +534,7 @@ fun PrevHomeScreen() {
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun PrevLoading(){
+fun PrevLoading() {
     FXCompybleTheme {
         BallClipRotateMultipleProgressIndicator(
             modifier = Modifier.size(60.dp),

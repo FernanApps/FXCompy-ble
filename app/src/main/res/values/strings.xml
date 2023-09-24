@@ -13,4 +13,6 @@
     <string name="close_search">Close Search</string>
     <string name="top_products">Top Products</string>
     <string name="products">Products</string>
+    <string name="shop">Shop</string>
+    <string name="order_by">Order by:</string>
 </resources>
