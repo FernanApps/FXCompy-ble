@@ -22,7 +22,16 @@ sealed class Screen(
     object Category : Screen("category", R.string.category, Icons.Default.Lock)
     object Offers : Screen("offers", R.string.offers, Icons.Default.Star)
     object Favorite : Screen("favorite", R.string.favorite, Icons.Default.Favorite)
+    object Products : Screen("products/{$CATEGORY_ARGUMENT_KEY}/{$SUB_CATEGORY_ARGUMENT_KEY}", R.string.products, Icons.Default.Favorite) {
+        fun pass(category: String, subcategory: String) = "products/$category/$subcategory"
+    }
+
 }
+
+const val CATEGORY_ARGUMENT_KEY = "category"
+const val SUB_CATEGORY_ARGUMENT_KEY = "subcategory"
+
+
 
 val bottomNavItems = listOf(
     Screen.Home,

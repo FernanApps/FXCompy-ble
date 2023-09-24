@@ -23,16 +23,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import pe.fernan.apps.compyble.ui.navigation.CATEGORY_ARGUMENT_KEY
+import pe.fernan.apps.compyble.ui.navigation.SUB_CATEGORY_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.screen.favorite.FavoriteScreen
 import pe.fernan.apps.compyble.ui.screen.home.HomeScreen
 import pe.fernan.apps.compyble.ui.screen.category.CategoryScreen
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.navigation.bottomNavItems
 import pe.fernan.apps.compyble.ui.screen.offers.OffersScreen
+import pe.fernan.apps.compyble.ui.screen.product.ProductScreen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,7 +59,21 @@ fun MainScreen(navController: NavHostController) {
                 composable(route = Screen.Category.route) { CategoryScreen(navController) }
                 composable(route = Screen.Offers.route) { OffersScreen(navController) }
                 composable(route = Screen.Favorite.route) { FavoriteScreen(navController) }
-
+                composable(
+                    route = Screen.Products.route,
+                    arguments = listOf(
+                        navArgument(CATEGORY_ARGUMENT_KEY) {
+                            type = NavType.StringType
+                        },
+                        navArgument(SUB_CATEGORY_ARGUMENT_KEY) {
+                            type = NavType.StringType
+                        }
+                    )
+                ) { backStackEntry ->
+                    val category = backStackEntry.arguments?.getString(CATEGORY_ARGUMENT_KEY)!!
+                    val subCategory = backStackEntry.arguments?.getString(SUB_CATEGORY_ARGUMENT_KEY)!!
+                     ProductScreen(category, subCategory, navController)
+                }
             }
         }
     )
@@ -92,7 +111,8 @@ fun BottomNavigation(navController: NavHostController) {
                                         it.route == screen.route
                                     })
                                     MaterialTheme.colorScheme.primary else Color.Black,
-                                textAlign = TextAlign.Start)
+                                textAlign = TextAlign.Start
+                            )
                         },
                         selected = currentDestination.hierarchy.any { it.route == screen.route },
                         onClick = {
@@ -118,9 +138,6 @@ fun BottomNavigation(navController: NavHostController) {
         Spacer(modifier = Modifier.width(0.dp))
     }
 }
-
-
-
 
 
 @Preview(showBackground = true)

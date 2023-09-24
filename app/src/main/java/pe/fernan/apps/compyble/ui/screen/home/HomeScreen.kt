@@ -70,6 +70,8 @@ import pe.fernan.apps.compyble.domain.model.Data
 import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.model.Slider
 import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
+import pe.fernan.apps.compyble.ui.composables.HeaderTitle
+import pe.fernan.apps.compyble.ui.composables.PageLoader
 import pe.fernan.apps.compyble.ui.composables.bounceClick
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 import pe.fernan.apps.compyble.utils.fixImage
@@ -194,33 +196,14 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
         }
 
     } else {
-        Box(modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ){
-            BallClipRotateMultipleProgressIndicator(
-                modifier = Modifier.size(100.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+        PageLoader()
     }
 
 
 }
 
 
-@Composable
-fun HeaderTitle(title: String) {
-    val formattedTitle = title.take(1).uppercase() + title.lowercase().substring(1)
-    Text(
-        text = formattedTitle,
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 25.dp),
-        textAlign = TextAlign.Start
-    )
-}
+
 
 
 @Composable

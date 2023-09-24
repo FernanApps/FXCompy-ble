@@ -1,10 +1,14 @@
 package pe.fernan.apps.compyble.data.remote.home
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import pe.fernan.apps.compyble.data.remote.CompyApi
 import pe.fernan.apps.compyble.domain.model.Advertisement
+import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.domain.model.Data
 import pe.fernan.apps.compyble.domain.model.Popup
 import pe.fernan.apps.compyble.domain.model.Product
@@ -94,21 +98,89 @@ class HomeRepositoryImp(private val api: CompyApi) : HomeRepository {
         )
     }
 
+
+    override fun getCategories(): Flow<List<Category>> = flow {
+        val doc = Jsoup.parse(api.getHome().body()!!)
+
+        val scriptJson = doc.select("script[data-search-tokens]").html()
+        val gson = Gson()
+
+        val type = object : TypeToken<Map<String, Map<String, Any>>>() {}.type
+        val productInfoList: Map<String, Map<String, Any>> = gson.fromJson(scriptJson, type)
+
+        val categoryMap = mutableMapOf<String, List<String>>()
+
+        for ((productName, productInfo) in productInfoList) {
+
+            val category = productInfo["category"] as? String?
+            val subcategory = productInfo["subcategory"] as? String
+
+            if (category != null && subcategory != null) {
+                val existingCategory = categoryMap[category]?.toMutableList()
+                if (existingCategory == null) {
+                    categoryMap[category] = (listOf(subcategory))
+                } else {
+                    existingCategory.add(subcategory)
+                    categoryMap[category] = existingCategory.distinct()
+
+                }
+            }
+
+        }
+
+        val categoryList = categoryMap.map{
+            Category(it.key, it.value)
+        }
+        emit(categoryList)
+
+    }
+
+
+    // https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas
+    override fun getSortKeys(category: String, subCategory: String) = flow{
+
+        val finalSortKeys = if(sortKeys.isEmpty()){
+            val doc = Jsoup.parse(api.getProducts(category = category, subcategory = subCategory).body()!!)
+            val inputElements = doc.select("form[data-filter-by-sort_form] input[type=radio]")
+            val inputLabelMap: MutableMap<String, String> = HashMap()
+
+            for (inputElement in inputElements) {
+                val value = inputElement.attr("value")
+                val label = doc.select("label[for=" + inputElement.attr("id") + "]").text()
+                inputLabelMap[value] = label
+            }
+            inputLabelMap
+        } else {
+            sortKeys
+        }
+
+        emit(finalSortKeys.toMap())
+    }
+
+    override fun getProducts(category: String, subCategory: String, page: Int, sort: String): Flow<List<Product>> = flow {
+
+    }
+
 }
+val sortKeys: MutableMap<String, String> = mutableMapOf()
+
 
 fun main() {
+    val doc = Jsoup.connect("https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas").get()
+    val inputElements = doc.select("form[data-filter-by-sort_form] input[type=radio]")
+    val inputLabelMap: MutableMap<String, String> = HashMap()
 
-
-    val doc = Jsoup.connect("https://compy.pe/").get()
-    val advertisements = doc.select("section[class^=section-2]").select("div.image-block").map {
-        Advertisement(
-            imageUrl = it.select("img").attr("src"),
-            href = it.select("a").first()?.attr("href") ?: ""
-        )
+    for (inputElement in inputElements) {
+        val value = inputElement.attr("value")
+        val label = doc.select("label[for=" + inputElement.attr("id") + "]").text()
+        inputLabelMap[value] = label
     }
 
-    advertisements.forEach {
-        println(it.toString())
-    }
+    // Imprimir el mapa
 
+    // Imprimir el mapa
+
+    inputLabelMap.forEach{
+        println("Key: ${it.key}, Value: ${it.value}")
+    }
 }

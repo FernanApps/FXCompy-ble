@@ -12,4 +12,5 @@
     <string name="clear_all_history">Clear all history</string>
     <string name="close_search">Close Search</string>
     <string name="top_products">Top Products</string>
+    <string name="products">Products</string>
 </resources>

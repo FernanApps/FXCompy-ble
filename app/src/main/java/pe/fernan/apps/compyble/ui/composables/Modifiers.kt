@@ -9,9 +9,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -46,7 +48,7 @@ fun Modifier.bounceClick(scalePressed: Float = 0.70f, onClick: () -> Unit = {}) 
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = { onClick() }
+            onClick = onClick
         )
         .pointerInput(buttonState) {
             awaitPointerEventScope {
@@ -61,7 +63,7 @@ fun Modifier.bounceClick(scalePressed: Float = 0.70f, onClick: () -> Unit = {}) 
         }
 }
 
-fun Modifier.pressClickEffect() = composed {
+fun Modifier.pressClickEffect(onClick: () -> Unit = {}) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
     val ty by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0f else -20f)
 
@@ -72,7 +74,7 @@ fun Modifier.pressClickEffect() = composed {
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = { }
+            onClick = onClick
         )
         .pointerInput(buttonState) {
             awaitPointerEventScope {
@@ -122,11 +124,14 @@ fun Modifier.shakeClickEffect() = composed {
 }
 
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TestPulsateEffect() {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
 
         Button(
