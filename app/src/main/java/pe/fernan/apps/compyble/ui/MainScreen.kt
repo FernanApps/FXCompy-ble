@@ -30,14 +30,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import pe.fernan.apps.compyble.ui.navigation.CATEGORY_ARGUMENT_KEY
+import pe.fernan.apps.compyble.ui.navigation.PRODUCTS_DETAILS_ARGUMENT_KEY
+import pe.fernan.apps.compyble.ui.navigation.ProductNavType
 import pe.fernan.apps.compyble.ui.navigation.SUB_CATEGORY_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.screen.favorite.FavoriteScreen
 import pe.fernan.apps.compyble.ui.screen.home.HomeScreen
 import pe.fernan.apps.compyble.ui.screen.category.CategoryScreen
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.navigation.bottomNavItems
+import pe.fernan.apps.compyble.ui.screen.details.DetailsScreen
 import pe.fernan.apps.compyble.ui.screen.offers.OffersScreen
-import pe.fernan.apps.compyble.ui.screen.product.ProductScreen
+import pe.fernan.apps.compyble.ui.screen.products.ProductScreen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -71,8 +74,21 @@ fun MainScreen(navController: NavHostController) {
                     )
                 ) { backStackEntry ->
                     val category = backStackEntry.arguments?.getString(CATEGORY_ARGUMENT_KEY)!!
-                    val subCategory = backStackEntry.arguments?.getString(SUB_CATEGORY_ARGUMENT_KEY)!!
-                     ProductScreen(category, subCategory, navController)
+                    val subCategory =
+                        backStackEntry.arguments?.getString(SUB_CATEGORY_ARGUMENT_KEY)!!
+                    ProductScreen(category, subCategory, navController)
+                }
+                composable(
+                    route = Screen.Details.route,
+                    arguments = listOf(
+                        navArgument(PRODUCTS_DETAILS_ARGUMENT_KEY) {
+                            type = ProductNavType
+                        }
+                    )
+                ) { backStackEntry ->
+                    Screen.Details.get(backStackEntry.arguments)?.let { product ->
+                        DetailsScreen(product, navController)
+                    }
                 }
             }
         }

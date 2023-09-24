@@ -1,4 +1,4 @@
-package pe.fernan.apps.compyble.ui.screen.product
+package pe.fernan.apps.compyble.ui.screen.products
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +44,7 @@ import pe.fernan.apps.compyble.R
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
 import pe.fernan.apps.compyble.ui.composables.PageLoader
 import pe.fernan.apps.compyble.ui.composables.SegmentedControlLazy
+import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.screen.home.ProductCard
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 
@@ -127,7 +128,7 @@ fun ProductScreen(
                 columns = GridCells.Fixed(2)) {
                 items(products) { product ->
                     ProductCard(product = product, modifier = Modifier.weight(1f)) {
-
+                        navController.navigate(Screen.Details.pass(it))
                     }
                 }
             }

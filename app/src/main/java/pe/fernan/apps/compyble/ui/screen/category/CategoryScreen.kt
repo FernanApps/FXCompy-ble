@@ -46,6 +46,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import pe.fernan.apps.compyble.R
 import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle

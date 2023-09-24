@@ -73,6 +73,7 @@ import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
 import pe.fernan.apps.compyble.ui.composables.PageLoader
 import pe.fernan.apps.compyble.ui.composables.bounceClick
+import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 import pe.fernan.apps.compyble.utils.fixImage
 import pe.fernan.apps.compyble.utils.getColorByNameOrDefault
@@ -126,7 +127,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                         Row(Modifier.fillMaxWidth()) {
                             subList.forEach { product ->
                                 ProductCard(product = product, modifier = Modifier.weight(1f)) {
-
+                                    navController.navigate(Screen.Details.pass(it))
                                 }
                             }
                         }
