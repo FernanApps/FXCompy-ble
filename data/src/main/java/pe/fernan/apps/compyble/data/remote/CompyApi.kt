@@ -2,6 +2,7 @@ package pe.fernan.apps.compyble.data.remote
 
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CompyApi {
@@ -18,6 +19,8 @@ interface CompyApi {
         @Query("subcategory") subcategory: String
     ): Response<String>
 
+    @GET("{path}")
+    suspend fun getDetail(@Path("path", encoded = true) path: String): Response<String>
 
 
 }

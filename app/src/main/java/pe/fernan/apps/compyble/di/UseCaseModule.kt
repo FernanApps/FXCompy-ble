@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pe.fernan.apps.compyble.domain.repository.CompyRepository
 import pe.fernan.apps.compyble.domain.useCase.GetCategoriesUseCase
+import pe.fernan.apps.compyble.domain.useCase.GetDetailsUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetProductsUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetSortKeysUseCase
@@ -34,5 +35,10 @@ object UseCaseModule {
         repository
     )
 
+
+    @Provides
+    fun provideDetailsUseCase(repository: CompyRepository) = GetDetailsUseCase(
+        repository
+    )
 
 }

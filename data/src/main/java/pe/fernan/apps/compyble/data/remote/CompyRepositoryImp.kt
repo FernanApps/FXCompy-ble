@@ -1,5 +1,7 @@
 package pe.fernan.apps.compyble.data.remote
 
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.net.Uri
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
@@ -10,8 +12,12 @@ import org.jsoup.nodes.Element
 import pe.fernan.apps.compyble.domain.model.Advertisement
 import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.domain.model.Data
+import pe.fernan.apps.compyble.domain.model.Day
+import pe.fernan.apps.compyble.domain.model.Details
 import pe.fernan.apps.compyble.domain.model.Popup
+import pe.fernan.apps.compyble.domain.model.Price
 import pe.fernan.apps.compyble.domain.model.Product
+import pe.fernan.apps.compyble.domain.model.Shop
 import pe.fernan.apps.compyble.domain.model.Slider
 import pe.fernan.apps.compyble.domain.repository.CompyRepository
 
@@ -178,7 +184,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
         page: Int,
         sort: String
     ): Flow<List<Product>> = flow {
-        println("getProducts Repo init 0" )
+        println("getProducts Repo init 0")
 
         val doc = Jsoup.parse(
             api.getProducts(
@@ -188,11 +194,98 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
                 page = page
             ).body()!!
         )
-        println("getProducts Repo init" )
+        println("getProducts Repo init")
 
         val products = getProducts(doc)
-        println("getProducts Repo $products" )
+        println("getProducts Repo $products")
         emit(products)
+    }
+
+    override fun getDetails(path: String): Flow<Details> = flow {
+
+        // Fixing if start /path :
+        val decodePath = Uri.decode(path.replace("^/".toRegex(), ""))
+        println("decodePath $decodePath")
+        val doc = Jsoup.parse(
+            api.getDetail(
+                path = decodePath
+            ).body()!!
+        )
+
+        val priceHistory = doc.select("script[data-chart_days]").map {
+            val days = it.attr("data-chart_days").toInt()
+
+            val type = object : TypeToken<List<Price>>() {}.type
+            val jsonHtml = it.html()
+            val prices = Gson().fromJson<List<Price>>(jsonHtml, type)
+            Day(days = days, prices)
+        }
+
+        val label = doc.select("div.c21c-price>p").last()?.text() ?: ""
+
+        val hrefUrlMain = doc.select("div.c21c-actions").select("a").first().let {
+            val href = it?.attr("href")
+            val shopLabel = it?.select("span")?.text()
+            return@let if (href != null && shopLabel != null) {
+                shopLabel to href
+            } else {
+                "" to ""
+            }
+        }
+
+        val shops = doc.select("div.t-body>a").mapNotNull {
+            if (it == null) {
+                return@mapNotNull null
+            }
+            val href = it.attr("href")
+            val name = it.attr("data-store")
+            val logo = it.select("picture>img").attr("src") ?: ""
+
+            var priceOnline = ""
+            var priceWithCard = ""
+
+            val divElement: Element? = it.select("div.card-19").first()
+            if (divElement != null) {
+                val divText = divElement.ownText().trim()
+                priceOnline = divText
+                // Esto imprimirá "S/.1,349"
+            }
+
+            val spanElement: Element? = it.select("span.card-19").last()
+            if (spanElement != null) {
+                val spanText = spanElement.ownText().trim()
+                priceWithCard = spanText
+                // Esto imprimirá "S/.1,309"
+            }
+
+
+            Shop(
+                name = name,
+                logo = logo,
+                href = href,
+                priceOnline = priceOnline,
+                priceWithCard = priceWithCard
+            )
+        }
+
+        val specifications = doc.select("div.c21e-content>h5>p").mapNotNull {
+            val smalls = it.select("small")
+            return@mapNotNull if (smalls.size > 1) {
+                smalls.first()!!.text() to smalls.last()!!.text()
+            } else {
+                null
+            }
+        }
+
+        val details = Details(
+            hrefUrlMain = hrefUrlMain,
+            label = label,
+            shops = shops,
+            specifications = specifications,
+            priceHistory = priceHistory
+        )
+
+        emit(details)
     }
 
 }
@@ -201,23 +294,7 @@ val sortKeys: MutableMap<String, String> = mutableMapOf()
 
 
 fun main() {
-    val doc =
-        Jsoup.connect("https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas")
-            .get()
-    val inputElements = doc.select("form[data-filter-by-sort_form] input[type=radio]")
-    val inputLabelMap: MutableMap<String, String> = HashMap()
 
-    for (inputElement in inputElements) {
-        val value = inputElement.attr("value")
-        val label = doc.select("label[for=" + inputElement.attr("id") + "]").text()
-        inputLabelMap[value] = label
-    }
 
-    // Imprimir el mapa
 
-    // Imprimir el mapa
-
-    inputLabelMap.forEach {
-        println("Key: ${it.key}, Value: ${it.value}")
-    }
 }

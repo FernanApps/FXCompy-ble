@@ -99,7 +99,9 @@ dependencies {
     // Constraint Layout
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
-
+    // Line Graphics
+    def vico = "1.12.0"
+    implementation("com.patrykandpatrick.vico:compose-m3:$vico")
 
 
     testImplementation 'junit:junit:4.13.2'
