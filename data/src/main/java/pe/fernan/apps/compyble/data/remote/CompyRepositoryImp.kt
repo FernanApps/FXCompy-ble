@@ -10,6 +10,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import pe.fernan.apps.compyble.domain.model.Advertisement
+import pe.fernan.apps.compyble.domain.model.Banner
 import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.domain.model.Data
 import pe.fernan.apps.compyble.domain.model.Day
@@ -22,12 +23,7 @@ import pe.fernan.apps.compyble.domain.model.Slider
 import pe.fernan.apps.compyble.domain.repository.CompyRepository
 
 
-private val banner = "https://compy.pe/img/thumbnail/nano-menu_diasoh-rp-mobile.png"
 
-private val popup = Popup(
-    href = "https://compy.pe/galeria?pagesize=24&page=1&sort=save&topstore=Shopstar&prices=199-10000&tags=Tecnolog%C3%ADa&utm_campaign_store=powersale-sp-shopstar",
-    imageUrl = "https://compy.pe/img/banner/powersale-shopstar-banner.webp"
-)
 
 class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
     private fun getProduct(element: Element?) = Product(
@@ -99,10 +95,39 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
 
         productCategories.addAll(others)
 
+
+        // ´´´ Pop
+
+        val banner: Banner? = doc.select("div[class=cintillo hidden-desktop]").first()?.let {
+            val elementA = it.select("a[href]")
+            val href = elementA.attr("href")
+            val image = elementA.select("img").attr("src")
+            if(!href.isNullOrEmpty() && !image.isNullOrEmpty()){
+                Banner(href, image)
+            } else {
+                null
+            }
+        }
+
+
+
+        val dialogGame = doc.getElementById("dialog-game")
+        val popHref = dialogGame?.select("a")?.first()?.attr("href")
+        val popImage = dialogGame?.select("img")?.attr("src")
+
+        val popUp = if(!popImage.isNullOrEmpty() && !popHref.isNullOrEmpty()){
+            Popup(
+                href = popHref,
+                imageUrl = popImage
+            )
+        } else {
+            null
+        }
+
         emit(
             Data(
                 banner = banner,
-                popup = popup,
+                popup = popUp,
                 sliders = sliders,
                 advertisements = advertisements,
                 productCategories = productCategories
@@ -294,7 +319,19 @@ val sortKeys: MutableMap<String, String> = mutableMapOf()
 
 
 fun main() {
+    val doc = Jsoup.connect("https://compy.pe/").get()
+    val banner: Banner? = doc.select("div[class=cintillo hidden-desktop]").first()?.let {
+        val elementA = it.select("a[href]")
+        val href = elementA.attr("href")
+        val image = elementA.select("img").attr("src")
+        if(!href.isNullOrEmpty() && !image.isNullOrEmpty()){
+            Banner(href, image)
+        } else {
+            null
+        }
+    }
 
-
+    println(banner!!.imageUrl)
+    println(banner!!.href)
 
 }

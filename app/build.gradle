@@ -103,6 +103,10 @@ dependencies {
     def vico = "1.12.0"
     implementation("com.patrykandpatrick.vico:compose-m3:$vico")
 
+    // Checking .
+    //https://github.com/yml-org/YCharts
+    //https://www.youtube.com/watch?v=HGsVBqUrnGY
+    // api min 26 implementation 'co.yml:ycharts:2.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

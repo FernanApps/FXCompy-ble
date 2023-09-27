@@ -102,9 +102,9 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                 SearchBar()
                 Spacer(Modifier.size(10.dp))
 
-                if (data?.banner?.isNotEmpty() == true) {
+                if (data?.banner != null) {
                     AsyncImage(
-                        model = data!!.banner,
+                        model = data!!.banner!!.imageUrl.fixImage(),
                         contentDescription = null,
                     )
                     Spacer(Modifier.size(15.dp))
@@ -138,7 +138,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                 if (data!!.productCategories.size >= 2) {
                     val lastList = data!!.productCategories.drop(1)
                     items(lastList) {
-                        CategoryProduct(it)
+                        CategoryProduct(it, navController)
                         Spacer(modifier = Modifier.size(15.dp))
                     }
 
@@ -171,7 +171,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                     ) {
 
                         AsyncImage(
-                            model = data!!.popup!!.imageUrl,
+                            model = data!!.popup!!.imageUrl.fixImage(),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -205,7 +205,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 
 
 @Composable
-fun CategoryProduct(pair: Pair<String, List<Product>>) {
+fun CategoryProduct(pair: Pair<String, List<Product>>, navController: NavHostController) {
     HeaderTitle(title = pair.first)
     Spacer(modifier = Modifier.height(10.dp))
     LazyRow(
@@ -226,7 +226,9 @@ fun CategoryProduct(pair: Pair<String, List<Product>>) {
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(CircleShape)
-                        .bounceClick()
+                        .bounceClick{
+                            navController.navigate(Screen.Details.pass(product))
+                        }
                         .border(width = 0.4.dp, Color.Black, CircleShape)
                         .background(Color.White)
                         .padding(15.dp),
@@ -271,7 +273,7 @@ fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> 
 
 
             AsyncImage(
-                model = product.imageUrl,
+                model = product.imageUrl.fixImage(),
                 contentDescription = null,
                 modifier = Modifier
                     //.size(250.dp)
