@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import pe.fernan.apps.compyble.data.Constants
+import pe.fernan.apps.compyble.domain.model.Product
 
 @Entity(tableName = Constants.tableProduct)
 data class ProductEntity(
@@ -16,5 +17,27 @@ data class ProductEntity(
     val currency: String,
     @PrimaryKey
     val href: String
+)
 
+fun ProductEntity.toDomain() = Product(
+    title = title,
+    brand = brand,
+    description = description,
+    imageUrl = imageUrl,
+    discount = discount,
+    price = price,
+    currency = currency,
+    href = href
+)
+
+
+fun Product.toEntity() = ProductEntity(
+    title = title,
+    brand = brand,
+    description = description,
+    imageUrl = imageUrl,
+    discount = discount,
+    price = price,
+    currency = currency,
+    href = href
 )

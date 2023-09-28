@@ -16,7 +16,7 @@ import pe.fernan.apps.compyble.data.local.db.ProductFavoriteDao
 object DatabaseModule {
 
     @Provides
-    fun provideDatabase(@ApplicationContext app: Application): CompyDb =
+    fun provideDatabase(app: Application): CompyDb =
         Room.databaseBuilder(app, CompyDb::class.java, "compy_db").fallbackToDestructiveMigration()
             .build()
 

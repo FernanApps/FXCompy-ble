@@ -88,11 +88,13 @@ import pe.fernan.apps.compyble.utils.getColorByNameOrDefault
 @Composable
 fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hiltViewModel()) {
 
-    val data: Data? by viewModel.getData.collectAsStateWithLifecycle(null)
+    val data: Data? by viewModel.getData
+
+    val productCategories = viewModel.productCategories
 
     val infoDialog = remember { mutableStateOf(true) }
 
-    
+
     if (data != null) {
 
         LazyColumn(
@@ -120,8 +122,8 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
             }
 
             // TopProducts()
-            if (data?.productCategories?.isNotEmpty() == true) {
-                val firstElement = data?.productCategories?.firstOrNull()
+            if (productCategories.isNotEmpty()) {
+                val firstElement = productCategories.firstOrNull()
                 if (firstElement != null) {
                     item {
                         Spacer(Modifier.size(15.dp))
@@ -131,20 +133,25 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 
                     items(firstElement.second.windowed(2, 2, true)) { subList ->
                         Row(Modifier.fillMaxWidth()) {
-                            subList.forEach { product ->
-                                ProductCard(product = product, modifier = Modifier.weight(1f)) {
+                            subList.forEach { state ->
+                                ProductCard(state = state, modifier = Modifier.weight(1f), onItemClick = {
                                     navController.navigate(Screen.Details.pass(it))
-                                }
+                                }, onFavClick = {
+                                    viewModel.evaluateFavorite(it)
+                                })
                             }
                         }
 
                     }
                 }
 
-                if (data!!.productCategories.size >= 2) {
-                    val lastList = data!!.productCategories.drop(1)
+                if (productCategories.size >= 2) {
+                    val lastList = productCategories.drop(1)
                     items(lastList) {
-                        CategoryProduct(it, navController)
+                        CategoryProduct(
+                            (it.first to it.second.map { prod -> prod.product }),
+                            navController
+                        )
                         Spacer(modifier = Modifier.size(15.dp))
                     }
 
@@ -250,10 +257,107 @@ fun CategoryProduct(pair: Pair<String, List<Product>>, navController: NavHostCon
 
 
 @Composable
-fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> Unit = {}) {
+fun ProductCard(
+    product: Product,
+    modifier: Modifier,
+    onFavClick: (Product) -> Unit = {},
+    onItemClick: (Product) -> Unit = {}
+) {
 
     var favorite by remember {
         mutableStateOf(false)
+    }
+
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .clickable {
+                onItemClick(product)
+            },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+
+        Text(
+            text = product.discount,
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .alpha(if (product.discount.isEmpty()) 0f else 1f)
+                .background(color = Color.Red, shape = RoundedCornerShape(20.dp))
+                .align(Alignment.End)
+                .padding(horizontal = 12.5.dp, vertical = 2.5.dp)
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(0.dp)
+
+        ) {
+
+
+            AsyncImage(
+                //model = product.imageUrl.fixImage(),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(product.imageUrl.fixImage())
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    //.size(250.dp)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(15.dp))
+                    .border(width = 0.4.dp, Color.Black, RoundedCornerShape(15.dp))
+                    .background(Color.White)
+                    .padding(4.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Icon(
+                imageVector = if (favorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                tint = if (favorite) Color.Red else Color.Black,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+                    .bounceClick {
+                        favorite = !favorite
+                    },
+            )
+
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            ProductInformation(product)
+
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+
+    }
+
+}
+
+@Composable
+fun ProductCard(
+    state: ProductState,
+    modifier: Modifier,
+    onFavClick: (ProductState) -> Unit = {},
+    onItemClick: (Product) -> Unit = {}
+) {
+
+    val product = state.product
+
+    var favorite by remember {
+        mutableStateOf(state.favorite)
     }
 
 
@@ -303,14 +407,15 @@ fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> 
             )
 
             Icon(
-                imageVector = if(favorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
-                tint = if(favorite) Color.Red else Color.Black,
+                imageVector = if (favorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                tint = if (favorite) Color.Red else Color.Black,
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
                     .bounceClick {
+                        onFavClick(ProductState(product, favorite))
                         favorite = !favorite
                     },
             )
@@ -538,19 +643,19 @@ fun SearchBar() {
 @Composable
 fun PrevHomeScreen() {
 
-    val interceptor = NetworkModule.provideLoggingInterceptor()
-    val okHttpClient = NetworkModule.provideHttpClient(interceptor)
-    val retrofit = NetworkModule.provideRetrofitInstance(okHttpClient)
-    val api = NetworkModule.provideMovieApi(retrofit)
-
-    val compyRepository = CompyRepositoryImp(api)
-    val getHomeDataUseCase = GetHomeDataUseCase(compyRepository)
-    val viewModel = HomeViewModel(getHomeDataUseCase)
-    val navController = rememberNavController()
-
-    FXCompybleTheme {
-        HomeScreen(navController, viewModel)
-    }
+//    val interceptor = NetworkModule.provideLoggingInterceptor()
+//    val okHttpClient = NetworkModule.provideHttpClient(interceptor)
+//    val retrofit = NetworkModule.provideRetrofitInstance(okHttpClient)
+//    val api = NetworkModule.provideMovieApi(retrofit)
+//
+//    val compyRepository = CompyRepositoryImp(api)
+//    val getHomeDataUseCase = GetHomeDataUseCase(compyRepository)
+//    val viewModel = HomeViewModel(getHomeDataUseCase)
+//    val navController = rememberNavController()
+//
+//    FXCompybleTheme {
+//        HomeScreen(navController, viewModel)
+//    }
 
 
 }

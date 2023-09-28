@@ -9,14 +9,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import pe.fernan.apps.compyble.domain.model.Product
-import pe.fernan.apps.compyble.domain.useCase.GetProductsUseCase
+import pe.fernan.apps.compyble.domain.useCase.GetProductsRemoteUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetSortKeysUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
     private val getSortKeysUseCase: GetSortKeysUseCase,
-    private val getProductsUseCase: GetProductsUseCase
+    private val getProductsUseCase: GetProductsRemoteUseCase
 ) : ViewModel() {
 
     private val isFirstLoading: MutableState<Boolean> = mutableStateOf(false)
