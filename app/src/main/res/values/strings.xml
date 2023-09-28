@@ -15,4 +15,7 @@
     <string name="products">Products</string>
     <string name="shop">Shop</string>
     <string name="order_by">Order by:</string>
+    <string name="history_price">Price History</string>
+    <string name="show_in">Show in:</string>
+    <string name="days">days</string>
 </resources>

@@ -229,8 +229,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
     override fun getDetails(path: String): Flow<Details> = flow {
 
         // Fixing if start /path :
-        val decodePath = Uri.decode(path.replace("^/".toRegex(), ""))
-        println("decodePath $decodePath")
+        val decodePath = path.replace("^/".toRegex(), "")
         val doc = Jsoup.parse(
             api.getDetail(
                 path = decodePath
@@ -293,7 +292,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
             )
         }
 
-        val specifications = doc.select("div.c21e-content>h5>p").mapNotNull {
+        val specifications = doc.select("div.c21e-content>p").mapNotNull {
             val smalls = it.select("small")
             return@mapNotNull if (smalls.size > 1) {
                 smalls.first()!!.text() to smalls.last()!!.text()
@@ -319,19 +318,17 @@ val sortKeys: MutableMap<String, String> = mutableMapOf()
 
 
 fun main() {
-    val doc = Jsoup.connect("https://compy.pe/").get()
-    val banner: Banner? = doc.select("div[class=cintillo hidden-desktop]").first()?.let {
-        val elementA = it.select("a[href]")
-        val href = elementA.attr("href")
-        val image = elementA.select("img").attr("src")
-        if(!href.isNullOrEmpty() && !image.isNullOrEmpty()){
-            Banner(href, image)
+    val doc = Jsoup.connect("https://compy.pe/galeria/producto/62583dd2537b29758f4b969d/laptop-lg-gram-14z90p-g.aj63b4-14%22-intel-i5-evo-11a-generaci%C3%B3n-256gb-ssd-8gb-ram").get()
+
+    val specifications = doc.select("div.c21e-content>p").mapNotNull {
+        val smalls = it.select("small")
+        return@mapNotNull if (smalls.size > 1) {
+            smalls.first()!!.text() to smalls.last()!!.text()
         } else {
             null
         }
     }
 
-    println(banner!!.imageUrl)
-    println(banner!!.href)
+    println(specifications)
 
 }

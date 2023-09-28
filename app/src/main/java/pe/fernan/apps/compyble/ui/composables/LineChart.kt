@@ -495,7 +495,7 @@ fun HorizontalAxisOnlyLineChart(
             .horizontalScroll(scrollState)) {
 
         Canvas(
-            modifier = modifier!!.aspectRatio(4f / 1f)
+            modifier = modifier!!.aspectRatio((lineChartData.size / 5).toInt().toFloat()  / 1f)
         ) {
 
             val bottomAreaHeight = horizontalAxisLabelFontSize.toPx()

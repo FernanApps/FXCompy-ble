@@ -6,6 +6,9 @@ import java.io.Serializable
 data class Details(
     // Url to Original Shop -> Example PlazaVea
     // COMPRAR EN SHOPSTAR | URL
+    /**
+     * LABEL | URL
+     */
     val hrefUrlMain: Pair<String, String>,
     // Sometimes the previous price or a label is shown
     val label: String,

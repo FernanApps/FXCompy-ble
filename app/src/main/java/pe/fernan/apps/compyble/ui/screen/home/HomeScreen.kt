@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,7 +49,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -61,6 +64,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ehsanmsz.mszprogressindicator.progressindicator.BallClipRotateMultipleProgressIndicator
 import pe.fernan.apps.compyble.R
 import pe.fernan.apps.compyble.data.remote.CompyRepositoryImp
@@ -73,6 +77,7 @@ import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
 import pe.fernan.apps.compyble.ui.composables.PageLoader
 import pe.fernan.apps.compyble.ui.composables.bounceClick
+import pe.fernan.apps.compyble.ui.composables.pressClickEffect
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 import pe.fernan.apps.compyble.utils.fixImage
@@ -87,6 +92,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 
     val infoDialog = remember { mutableStateOf(true) }
 
+    
     if (data != null) {
 
         LazyColumn(
@@ -226,7 +232,7 @@ fun CategoryProduct(pair: Pair<String, List<Product>>, navController: NavHostCon
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .clip(CircleShape)
-                        .bounceClick{
+                        .bounceClick {
                             navController.navigate(Screen.Details.pass(product))
                         }
                         .border(width = 0.4.dp, Color.Black, CircleShape)
@@ -246,8 +252,17 @@ fun CategoryProduct(pair: Pair<String, List<Product>>, navController: NavHostCon
 @Composable
 fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> Unit = {}) {
 
+    var favorite by remember {
+        mutableStateOf(false)
+    }
+
+
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier
+            .padding(16.dp)
+            .clickable {
+                onItemClick(product)
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -266,14 +281,16 @@ fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> 
         Box(
             modifier = Modifier
                 .padding(0.dp)
-                .bounceClick{
-                    onItemClick(product)
-                }
+
         ) {
 
 
             AsyncImage(
-                model = product.imageUrl.fixImage(),
+                //model = product.imageUrl.fixImage(),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(product.imageUrl.fixImage())
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 modifier = Modifier
                     //.size(250.dp)
@@ -286,12 +303,16 @@ fun ProductCard(product: Product, modifier: Modifier, onItemClick: (Product) -> 
             )
 
             Icon(
-                imageVector = Icons.Outlined.FavoriteBorder,
+                imageVector = if(favorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                tint = if(favorite) Color.Red else Color.Black,
                 contentDescription = null,
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.TopEnd)
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .bounceClick {
+                        favorite = !favorite
+                    },
             )
 
         }
