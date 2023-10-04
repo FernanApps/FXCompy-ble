@@ -221,7 +221,7 @@ fun DetailsScreen(
 
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                                containerColor = MaterialTheme.colorScheme.secondary
                             )) {
                             Text(text = details!!.hrefUrlMain.first)
                         }

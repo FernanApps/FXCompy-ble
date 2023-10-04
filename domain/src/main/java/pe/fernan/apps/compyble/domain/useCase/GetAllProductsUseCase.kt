@@ -5,9 +5,8 @@ import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.repository.ProductRepository
 
 class GetAllProductsFavoriteLocalUseCase(private val repository: ProductRepository) {
-    operator fun invoke(): Flow<List<Product>> {
-        return repository.getAllProducts()
-    }
+    operator fun invoke() = repository.getAllProducts()
+
 }
 
 class SaveProductLocalUseCase(private val repository: ProductRepository) {

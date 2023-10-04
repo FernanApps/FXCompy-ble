@@ -18,4 +18,5 @@
     <string name="history_price">Price History</string>
     <string name="show_in">Show in:</string>
     <string name="days">days</string>
+    <string name="there_no_data">There is no data</string>
 </resources>

@@ -1,9 +1,11 @@
 package pe.fernan.apps.compyble.ui.screen.favorite
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import pe.fernan.apps.compyble.domain.useCase.DeleteProductLocalUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetAllProductsFavoriteLocalUseCase
@@ -14,29 +16,19 @@ import javax.inject.Inject
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
     private val getAllProductsFavoriteLocalUseCase: GetAllProductsFavoriteLocalUseCase,
-    private val saveProductLocalUseCase: SaveProductLocalUseCase,
     private val deleteProductLocalUseCase: DeleteProductLocalUseCase
 ) : ViewModel() {
 
-    val products = mutableStateListOf<ProductState>()
-
-    init {
-        viewModelScope.launch {
-            getAllProductsFavoriteLocalUseCase().collect {
-                products.clear()
-                products.addAll(it.map { product -> ProductState(product, true) })
-            }
-
-        }
+    val products = getAllProductsFavoriteLocalUseCase.invoke().map { x ->
+        println("_______xxxxxx")
+        x.map { product -> ProductState(product, true) }
     }
 
-    fun evaluateFavorite(state: ProductState) {
+
+    fun deleteFavorite(state: ProductState) {
         viewModelScope.launch {
-            if (state.favorite) {
-                deleteProductLocalUseCase.invoke(state.product)
-            } else {
-                saveProductLocalUseCase.invoke(state.product)
-            }
+            deleteProductLocalUseCase.invoke(state.product)
+            products
         }
     }
 }
