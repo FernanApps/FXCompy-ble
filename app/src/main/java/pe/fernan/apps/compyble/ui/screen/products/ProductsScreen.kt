@@ -3,6 +3,7 @@ package pe.fernan.apps.compyble.ui.screen.products
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,18 +48,19 @@ import pe.fernan.apps.compyble.ui.composables.SegmentedControlLazy
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.screen.home.ProductCard
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
+import pe.fernan.apps.compyble.utils.Path
 
 
 // https://compy.pe/galeria?pagesize=24&page=1&sort=offer&category=Computadoras&subcategory=Consolas
 @Composable
 fun ProductScreen(
-    category: String,
-    subcategory: String,
+    paths: List<Path>,
     navController: NavHostController,
     viewModel: ProductsViewModel = hiltViewModel()
 ) {
 
-    viewModel.setInitial(category, subcategory)
+    //viewModel.setInitial(category, subcategory)
+    viewModel.setPaths(paths)
 
 
     val listState = rememberLazyGridState()

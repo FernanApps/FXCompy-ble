@@ -56,6 +56,7 @@ import pe.fernan.apps.compyble.ui.composables.bounceClick
 import pe.fernan.apps.compyble.ui.composables.pressClickEffect
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
+import pe.fernan.apps.compyble.utils.Path
 import pe.fernan.apps.compyble.utils.warmColors
 import pe.fernan.apps.compyble.utils.warmGradients
 import kotlin.random.Random
@@ -168,8 +169,10 @@ fun CategoryScreen(
                                 .bounceClick {
                                     navController.navigate(
                                         route = Screen.Products.pass(
-                                            categorieSelected!!.category,
-                                            item
+                                            Path(
+                                                categorieSelected!!.category,
+                                                item
+                                            )
                                         )
                                     )
                                 },

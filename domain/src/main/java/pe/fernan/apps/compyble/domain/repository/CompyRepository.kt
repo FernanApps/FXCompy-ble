@@ -10,9 +10,8 @@ interface CompyRepository {
     fun getMain(): Flow<Data>
     fun getCategories(): Flow<List<Category>>
 
-    fun getSortKeys(category: String, subCategory: String): Flow<List<Pair<String, String>>>
-    fun getProducts(category: String, subCategory: String, page: Int, sort: String): Flow<List<Product>>
-
+    fun getSortKeys(paths: Map<String, String>): Flow<List<Pair<String, String>>>
+    fun getProducts(paths: Map<String, String>): Flow<List<Product>>
     fun getDetails(path: String): Flow<Details>
 
 

@@ -21,8 +21,7 @@ import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.model.Shop
 import pe.fernan.apps.compyble.domain.model.Slider
 import pe.fernan.apps.compyble.domain.repository.CompyRepository
-
-
+import java.net.URI
 
 
 class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
@@ -102,7 +101,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
             val elementA = it.select("a[href]")
             val href = elementA.attr("href")
             val image = elementA.select("img").attr("src")
-            if(!href.isNullOrEmpty() && !image.isNullOrEmpty()){
+            if (!href.isNullOrEmpty() && !image.isNullOrEmpty()) {
                 Banner(href, image)
             } else {
                 null
@@ -110,12 +109,11 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
         }
 
 
-
         val dialogGame = doc.getElementById("dialog-game")
         val popHref = dialogGame?.select("a")?.first()?.attr("href")
         val popImage = dialogGame?.select("img")?.attr("src")
 
-        val popUp = if(!popImage.isNullOrEmpty() && !popHref.isNullOrEmpty()){
+        val popUp = if (!popImage.isNullOrEmpty() && !popHref.isNullOrEmpty()) {
             Popup(
                 href = popHref,
                 imageUrl = popImage
@@ -173,12 +171,32 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
     }
 
 
+    private fun checkPath(paths: Map<String, String>): MutableMap<String, String> {
+        val pathsMap = paths.toMutableMap()
+        // Checking
+        if(!pathsMap.containsKey("pagesize")){
+            pathsMap["pagesize"] = "24"
+        }
+
+        if(!pathsMap.containsKey("page")){
+            pathsMap["page"] = "1"
+        }
+
+        if(!pathsMap.containsKey("sort")){
+            pathsMap["sort"] = "offer"
+        }
+
+        return pathsMap
+    }
+
     // https://compy.pe/galeria?pagesize=1&page=1&sort=offer&category=Computadoras&subcategory=Consolas
-    override fun getSortKeys(category: String, subCategory: String) = flow {
+    override fun getSortKeys(paths: Map<String, String>) = flow {
+
+        val pathsMap = checkPath(paths)
 
         val finalSortKeys = if (sortKeys.isEmpty()) {
             val doc = Jsoup.parse(
-                api.getProducts(category = category, subcategory = subCategory).body()!!
+                api.getProducts(pathsMap).body()!!
             )
             val inputElements = doc.select("form[data-filter-by-sort_form] input[type=radio]")
             println("Testing getSortKeys $inputElements")
@@ -204,20 +222,15 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
     }
 
     override fun getProducts(
-        category: String,
-        subCategory: String,
-        page: Int,
-        sort: String
+        paths: Map<String, String>
     ): Flow<List<Product>> = flow {
+
+        val pathsMap = checkPath(paths)
+
         println("getProducts Repo init 0")
 
         val doc = Jsoup.parse(
-            api.getProducts(
-                category = category,
-                subcategory = subCategory,
-                sort = sort,
-                page = page
-            ).body()!!
+            api.getProducts(pathsMap).body()!!
         )
         println("getProducts Repo init")
 
@@ -228,6 +241,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
 
     override fun getDetails(path: String): Flow<Details> = flow {
 
+
         // Fixing if start /path :
         val decodePath = path.replace("^/".toRegex(), "")
         val doc = Jsoup.parse(
@@ -236,6 +250,22 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
             ).body()!!
         )
 
+        // Products If From Dialog :x
+        val imageUrl = doc.select("meta[property=og:image]").attr("content")
+        val description = doc.select("meta[property=og:description]").attr("content")
+        val title =  doc.select("meta[property=og:title]").attr("content")
+        val price = doc.select("div.c21c-price>p").first()?.text() ?: ""
+
+        val product = Product(
+            brand = "",
+            title = title,
+            description = description,
+            imageUrl = imageUrl,
+            discount = "",
+            currency = "",
+            href = "",
+            price = price
+        )
         val priceHistory = doc.select("script[data-chart_days]").map {
             val days = it.attr("data-chart_days").toInt()
 
@@ -302,6 +332,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
         }
 
         val details = Details(
+            product = product,
             hrefUrlMain = hrefUrlMain,
             label = label,
             shops = shops,
@@ -318,17 +349,11 @@ val sortKeys: MutableMap<String, String> = mutableMapOf()
 
 
 fun main() {
-    val doc = Jsoup.connect("https://compy.pe/galeria/producto/62583dd2537b29758f4b969d/laptop-lg-gram-14z90p-g.aj63b4-14%22-intel-i5-evo-11a-generaci%C3%B3n-256gb-ssd-8gb-ram").get()
+    val doc =
+        Jsoup.connect("https://compy.pe/galeria/producto/65168e8cf0ffaae7a32f6d84/lavadora-oster-os-pwsmk0014b-14kg-negro?utm_campaign_store=P-031023-061023-oechsle")
+            .get()
 
-    val specifications = doc.select("div.c21e-content>p").mapNotNull {
-        val smalls = it.select("small")
-        return@mapNotNull if (smalls.size > 1) {
-            smalls.first()!!.text() to smalls.last()!!.text()
-        } else {
-            null
-        }
-    }
-
-    println(specifications)
+    val price = doc.select("div.c21c-price>p").first()?.text() ?: ""
+    println(price)
 
 }

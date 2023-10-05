@@ -29,10 +29,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import pe.fernan.apps.compyble.ui.navigation.CATEGORY_ARGUMENT_KEY
+import pe.fernan.apps.compyble.ui.navigation.PATHS_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.navigation.PRODUCTS_DETAILS_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.navigation.ProductNavType
-import pe.fernan.apps.compyble.ui.navigation.SUB_CATEGORY_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.screen.favorite.FavoriteScreen
 import pe.fernan.apps.compyble.ui.screen.home.HomeScreen
 import pe.fernan.apps.compyble.ui.screen.category.CategoryScreen
@@ -65,18 +64,14 @@ fun MainScreen(navController: NavHostController) {
                 composable(
                     route = Screen.Products.route,
                     arguments = listOf(
-                        navArgument(CATEGORY_ARGUMENT_KEY) {
+                        navArgument(PATHS_ARGUMENT_KEY) {
                             type = NavType.StringType
                         },
-                        navArgument(SUB_CATEGORY_ARGUMENT_KEY) {
-                            type = NavType.StringType
-                        }
                     )
                 ) { backStackEntry ->
-                    val category = backStackEntry.arguments?.getString(CATEGORY_ARGUMENT_KEY)!!
-                    val subCategory =
-                        backStackEntry.arguments?.getString(SUB_CATEGORY_ARGUMENT_KEY)!!
-                    ProductScreen(category, subCategory, navController)
+                    Screen.Products.get(backStackEntry.arguments)?.let { paths ->
+                        ProductScreen(paths, navController)
+                    }
                 }
                 composable(
                     route = Screen.Details.route,

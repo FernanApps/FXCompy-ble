@@ -10,9 +10,10 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import pe.fernan.apps.compyble.R
 import pe.fernan.apps.compyble.domain.model.Product
-import java.io.File.separator
+import pe.fernan.apps.compyble.utils.Path
 
 sealed class Screen(
     private val baseRoute: String,
@@ -48,11 +49,27 @@ sealed class Screen(
     object Favorite : Screen("favorite", title = R.string.favorite, icon = Icons.Default.Favorite)
     object Products : Screen(
         "products",
-        argKeys = listOf(CATEGORY_ARGUMENT_KEY, SUB_CATEGORY_ARGUMENT_KEY),
+        argKeys = listOf(PATHS_ARGUMENT_KEY),
         title = R.string.products,
         icon = Icons.Default.Favorite
     ) {
-        fun pass(category: String, subcategory: String) = routeFormat.format(category, subcategory)
+
+        private fun parser(vararg path: Path): String = Uri.encode(Gson().toJson(path.toList()))
+
+
+        fun pass(vararg paths: Path) = routeFormat.format(parser(*paths))
+        fun pass(category: String, subCategory: String) = pass(
+            Path("category", category), Path("subcategory", subCategory)
+        )
+
+
+        fun get(arguments: Bundle?): List<Path>? {
+            val pathArguments = arguments?.getString(PATHS_ARGUMENT_KEY) ?: return null
+            val listType = object : TypeToken<List<Path>>() {}.type
+            return Gson().fromJson(pathArguments, listType)
+
+        }
+
     }
 
     object Details : Screen(
@@ -77,10 +94,21 @@ sealed class Screen(
 
 }
 
+fun main() {
+    println(
+        Screen.Products.pass(
+            Path("first", "first"),
+            Path("second", "second"),
+            Path("third", "third")
+        )
+    )
+}
+
+
 val ProductNavType = ObjectNavType(Product::class.java)
 
-const val CATEGORY_ARGUMENT_KEY = "category"
-const val SUB_CATEGORY_ARGUMENT_KEY = "subcategory"
+
+const val PATHS_ARGUMENT_KEY = "paths"
 
 const val PRODUCTS_DETAILS_ARGUMENT_KEY = "subcategory"
 

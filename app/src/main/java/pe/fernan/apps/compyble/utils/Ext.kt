@@ -6,6 +6,7 @@ class Ext {
 }
 
 fun String.fixImage(): String {
+    if(this.isEmpty()) return ""
     return if(!this.startsWith("http")){
         baseUrl + this
     } else {

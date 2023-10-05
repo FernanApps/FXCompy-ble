@@ -140,7 +140,9 @@ fun DetailsScreen(
                     AsyncImage(
                         // model = product.imageUrl.fixImage(),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(product.imageUrl.fixImage())
+                            .data(
+                                product.imageUrl.fixImage()
+                                    .ifEmpty { details?.product?.imageUrl?.fixImage() ?: "" })
                             .crossfade(true)
                             .build(),
                         contentDescription = null,
@@ -174,7 +176,7 @@ fun DetailsScreen(
 
 
                     Text(
-                        text = product.title,
+                        text = product.title.ifEmpty { details?.product?.title ?: "" },
                         fontSize = 16.sp,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.SemiBold,
@@ -182,7 +184,7 @@ fun DetailsScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Row() {
                         Text(
-                            text = product.priceFormat,
+                            text = product.priceFormat.ifEmpty { details?.product?.price ?: "" },
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -222,7 +224,8 @@ fun DetailsScreen(
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondary
-                            )) {
+                            )
+                        ) {
                             Text(text = details!!.hrefUrlMain.first)
                         }
                     }

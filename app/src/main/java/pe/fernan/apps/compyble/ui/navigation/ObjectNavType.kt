@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import androidx.navigation.NavType
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import pe.fernan.apps.compyble.domain.model.Product
 import java.io.Serializable
 
@@ -32,7 +33,6 @@ class ObjectNavType<T>(private val clazz: Class<T>) : NavType<T>(isNullableAllow
         bundle.putString(key, gson.toJson(value))
     }
 }
-
 
 
 

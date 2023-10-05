@@ -10,14 +10,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import pe.fernan.apps.compyble.domain.model.Data
 import pe.fernan.apps.compyble.domain.model.Product
+import pe.fernan.apps.compyble.domain.model.Slider
 import pe.fernan.apps.compyble.domain.useCase.DeleteProductLocalUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetAllProductsFavoriteLocalUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
 import pe.fernan.apps.compyble.domain.useCase.SaveProductLocalUseCase
+import pe.fernan.apps.compyble.utils.Path
+import pe.fernan.apps.compyble.utils.UrlUtils.findPathsInUrl
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +30,10 @@ class HomeViewModel @Inject constructor(
     private val saveProductLocalUseCase: SaveProductLocalUseCase,
     private val deleteProductLocalUseCase: DeleteProductLocalUseCase
 ) : ViewModel() {
+
+    val infoDialog =  mutableStateOf(true)
+
+
     val getData: MutableState<Data?> = mutableStateOf(null)
 
     private var isLoadingFirstFavorite = false
@@ -93,6 +100,17 @@ class HomeViewModel @Inject constructor(
 
     }
 
+    fun setCloseInfoDialog() {
+        infoDialog.value = false
+    }
+
+    // https://compy.pe/galeria?pagesize=24&page=1&sort=offer&category=Celulares&brand=APPLE
+    // <a href="/galeria?pagesize=24&amp;page=1&amp;sort=offer&amp;category=Celulares&amp;brand=APPLE" class="btn btn-primary btn-rounded-more btn-primary-bluegray" banner-data="" banner-id="home-iphones" banner-name="iphones" banner-pos="Home - Banners Top - 1" banner-creative="/galeria?category=Celulares&amp;brand=APPLE" data-banner-ga4="" data-banner-id="home-iphones" data-banner-name="iphones" data-banner-pos="1" data-banner-format="Home categoría">Compara iPhones</a>
+    fun processAndExtract(slide: Slider): Path {
+        val href = slide.href
+        return Path("","")
+    }
+
 
 }
 
@@ -101,4 +119,16 @@ class ProductState(
     initialFavorite: Boolean = false
 ) {
     var favorite by mutableStateOf(initialFavorite)
+}
+
+
+
+fun main() {
+    val urlString = "https://compy.pe/galeria?pagesize=24&page=1&sort=offer&category=Celulares&brand=APPLE"
+
+    val queryParameters = findPathsInUrl(urlString)
+
+    queryParameters.forEach { (key, value) ->
+        println("$key: $value")
+    }
 }

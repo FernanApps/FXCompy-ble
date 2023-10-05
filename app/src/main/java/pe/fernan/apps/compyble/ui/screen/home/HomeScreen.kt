@@ -49,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -60,24 +59,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ehsanmsz.mszprogressindicator.progressindicator.BallClipRotateMultipleProgressIndicator
 import pe.fernan.apps.compyble.R
-import pe.fernan.apps.compyble.data.remote.CompyRepositoryImp
-import pe.fernan.apps.compyble.di.NetworkModule
 import pe.fernan.apps.compyble.domain.model.Advertisement
 import pe.fernan.apps.compyble.domain.model.Data
 import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.model.Slider
-import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
 import pe.fernan.apps.compyble.ui.composables.PageLoader
 import pe.fernan.apps.compyble.ui.composables.bounceClick
-import pe.fernan.apps.compyble.ui.composables.pressClickEffect
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 import pe.fernan.apps.compyble.utils.fixImage
@@ -92,7 +85,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 
     val productCategories = viewModel.productCategories
 
-    val infoDialog = remember { mutableStateOf(true) }
+    val infoDialog by viewModel.infoDialog
 
 
     if (data != null) {
@@ -117,7 +110,15 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                     )
                     Spacer(Modifier.size(15.dp))
                 }
-                Sliders(data?.sliders ?: listOf())
+                Sliders(data?.sliders ?: listOf()){ slide ->
+                    val (category, subcategory) = viewModel.processAndExtract(slide)
+                    navController.navigate(
+                        route = Screen.Products.pass(
+                            category,
+                            subcategory
+                        )
+                    )
+                }
                 Advertisements(data?.advertisements ?: listOf())
             }
 
@@ -134,11 +135,15 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                     items(firstElement.second.windowed(2, 2, true)) { subList ->
                         Row(Modifier.fillMaxWidth()) {
                             subList.forEach { state ->
-                                ProductCard(state = state, modifier = Modifier.weight(1f), onItemClick = {
-                                    navController.navigate(Screen.Details.pass(it))
-                                }, onFavClick = {
-                                    viewModel.evaluateFavorite(it)
-                                })
+                                ProductCard(
+                                    state = state,
+                                    modifier = Modifier.weight(1f),
+                                    onItemClick = {
+                                        navController.navigate(Screen.Details.pass(it))
+                                    },
+                                    onFavClick = {
+                                        viewModel.evaluateFavorite(it)
+                                    })
                             }
                         }
 
@@ -150,8 +155,9 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                     items(lastList) {
                         CategoryProduct(
                             (it.first to it.second.map { prod -> prod.product }),
-                            navController
-                        )
+                        ){ product ->
+                            navController.navigate(Screen.Details.pass(product))
+                        }
                         Spacer(modifier = Modifier.size(15.dp))
                     }
 
@@ -168,7 +174,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
         }
 
 
-        if (infoDialog.value) {
+        if (infoDialog) {
             if (data?.popup != null) {
 
                 Dialog(onDismissRequest = {
@@ -178,7 +184,34 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                         modifier = Modifier
                             .fillMaxSize()
                             .bounceClick(0.85f) {
-                                infoDialog.value = false
+                                viewModel.setCloseInfoDialog()
+
+                                // Check Navigate
+                                //if(!data!!.popup!!.href.startsWith("/galeria")){
+                                    // Products Screen Navigate
+                                    //navController.navigate(Screen.Products.pass())
+
+                                //} else {
+                                    // /galeria/producto/65168e8cf0ffaae7a32f6d84/lavadora-oster-os-pwsmk0014b-14kg-negro?utm_campaign_store=P-031023-061023-oechsle
+                                    // /galeria/producto/65168e8cf0ffaae7a32f6d84/lavadora-oster-os-pwsmk0014b-14kg-negro?utm_campaign_store=P-031023-061023-oechsle
+
+                                    navController.navigate(
+                                        Screen.Details.pass(
+                                            Product(
+                                                title = "",
+                                                brand = "",
+                                                description = "",
+                                                imageUrl = "",
+                                                discount = "",
+                                                price = "",
+                                                currency = "",
+                                                href = data!!.popup!!.href
+                                            )
+                                        )
+                                    )
+                                //}
+
+
                             },
                         contentAlignment = Alignment.Center,
                     ) {
@@ -218,7 +251,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 
 
 @Composable
-fun CategoryProduct(pair: Pair<String, List<Product>>, navController: NavHostController) {
+fun CategoryProduct(pair: Pair<String, List<Product>>, onItemClick: (Product) -> kotlin.Unit) {
     HeaderTitle(title = pair.first)
     Spacer(modifier = Modifier.height(10.dp))
     LazyRow(
@@ -240,7 +273,7 @@ fun CategoryProduct(pair: Pair<String, List<Product>>, navController: NavHostCon
                         .aspectRatio(1f)
                         .clip(CircleShape)
                         .bounceClick {
-                            navController.navigate(Screen.Details.pass(product))
+                            onItemClick(product)
                         }
                         .border(width = 0.4.dp, Color.Black, CircleShape)
                         .background(Color.White)
@@ -501,7 +534,7 @@ fun AdCard(advertisement: Advertisement) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Sliders(sliders: List<Slider>) {
+fun Sliders(sliders: List<Slider>, onItemClick: (Slider) -> Unit) {
 
     if (sliders.isEmpty()) return
 
@@ -535,7 +568,9 @@ fun Sliders(sliders: List<Slider>) {
                 modifier = Modifier.padding(25.dp)
             )
             Button(
-                modifier = Modifier.padding(start = 25.dp),
+                modifier = Modifier.padding(start = 25.dp).bounceClick {
+                    onItemClick(slider)
+                },
                 onClick = { }, shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor

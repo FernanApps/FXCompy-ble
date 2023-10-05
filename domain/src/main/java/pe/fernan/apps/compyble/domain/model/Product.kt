@@ -4,6 +4,8 @@ import java.io.Serializable
 
 
 data class Details(
+
+    val product: Product? = null,
     // Url to Original Shop -> Example PlazaVea
     // COMPRAR EN SHOPSTAR | URL
     /**
