@@ -58,7 +58,7 @@ This architecture allows for a clear separation of responsibilities, makes it ea
 
 *This architecture is separated in modules*
 <p align="center">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/structure_main.png" alt="">
+  <img src="previews/structure_main.png" alt="">
 </p>
 
 
@@ -66,35 +66,22 @@ This architecture allows for a clear separation of responsibilities, makes it ea
 
 
 - **Presentation** is responsible for the user interface and user interaction. Here are the UI components and presentation logic. <br>  <br>  
-  ![Imagen](https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/structure_app.png) <br>
+  ![Imagen](previews/structure_app.png) <br>
   <br>
 
 
 -  **Data**   is responsible for data access and persistence. Here the repositories defined in the domain layer are implemented and frameworks and libraries are used to interact with data sources. <br> <br>  
-   ![Imagen](https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/structure_data.png) <br>
+   ![Imagen](previews/structure_data.png) <br>
 
 
 - **Domain**  is the core of the architecture and contains the main business logic of the application. Here the application-specific use cases and business rules are defined. <br><br>
-  ![Imagen](https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/structure_domain.png)
+  ![Imagen](previews/structure_domain.png)
 
-
-## Build your own app?
-
-To build your own app is super simple
-
-#### AppWrite
-Install appwrite on your own server, it can guide you from [Build your server](https://github.com/appwrite/appwrite) or you can also use [Cloud Appwrite](https://cloud.appwrite.io/console/)
-
-1. Create a new project, and open
-2. You go to integrations and add a new platform (Android App), you add the name and the name of the application package, you don't need to add the dependencies because it already has them
-3. Create one API Key
-4. To facilitate the creation of the database with its collections, I have created a script in Kotlin [CreateDatabase.kt](https://github.com/FernanApps/FernanEcommerceShop/blob/master/scripts/CreateDatabase.kt#L6-L105), you can run it in an Online Kotlin Compiler, Android Studio, etc, it does not need any dependencies, extra, remember to configure your keys in the script.
-
-
+  
 ## Screens
 #### Splash
 <div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/splash_1.png" alt="" width="200">
+  <img src="previews/splash_1.png" alt="" width="200">
 </div>
 
 #### Onboarding
