@@ -56,6 +56,7 @@ sealed class Screen(
 
         private fun parser(vararg path: Path): String = Uri.encode(Gson().toJson(path.toList()))
 
+        fun pass(paths: List<Path>) = routeFormat.format(parser(*paths.toTypedArray()))
 
         fun pass(vararg paths: Path) = routeFormat.format(parser(*paths))
         fun pass(category: String, subCategory: String) = pass(

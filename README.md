@@ -30,24 +30,9 @@ The project at hand is a mobile application developed for a hackathon event, aim
 
 ### Features
 
-- **User Authentication:** AppWrite handles user authentication, ensuring secure access to the app's features. Users can create accounts, log in securely, and manage their profiles, guaranteeing a personalized experience.
 - **Efficient Data Storage:** AppWrite efficiently stores and manages data, providing a seamless user experience. It optimizes data retrieval and storage, resulting in fast response times and minimal downtime.
-- **Seamless Payment Experience:** The integration of Stripe allows users to make payments securely and without hassle. Users can add their preferred payment methods, and the app securely processes transactions, providing peace of mind.
 - **Product Exploration:** Users can explore a vast selection of fashion items, including the latest trends, popular styles, and exclusive offers. The app provides intuitive search and filtering functionalities to help users discover their desired products easily.
-- **Shopping Cart Functionality:** Users can add their favorite items to the cart and proceed to checkout seamlessly. The cart retains the selected items, allowing users to review and modify their choices before making a final purchase decision.
-- **Secure Transactions:** The custom backend implementation ensures that payments are processed securely without compromising users' financial data. Encryption techniques and best practices are employed to protect sensitive information, maintaining the highest security standards.
 - **Notifications:** Users receive timely notifications about their orders, including order confirmations, shipment updates, and delivery notifications. These notifications keep users informed and engaged throughout the shopping experience.
-- **Customer Support:** The app provides a contact feature, allowing users to reach out to support for any inquiries, assistance, or feedback. The dedicated support team ensures a prompt and helpful response, enhancing customer satisfaction.
-
-The project was developed solely by me within a two-week timeframe, showcasing my ability to rapidly develop and deploy a mobile application using AppWrite and Stripe. The backend server is hosted on Glitch, a cloud-based development platform, and additional functionalities were implemented to handle card payments through Stripe. The app's front-end design focuses on simplicity, elegance, and intuitive navigation, providing a delightful user interface.
-
-The application's architecture enables smooth communication between the app and the payment platform, ensuring a seamless user experience and enhanced security. The integration with AppWrite and Stripe offers scalability, allowing the app to handle increased user demand and adapt to future business growth.
-
-I implemented extensive testing and quality assurance measures to ensure the app's stability, reliability, and overall performance. Regular updates and maintenance are planned to introduce new features, address user feedback, and improve the app's functionality.
-
-This project showcases my skills in developing a secure, efficient, and user-friendly mobile commerce application. It emphasizes the importance of a seamless payment experience and demonstrates how technology can elevate the e-commerce industry, providing a platform that both businesses and customers can trust.
-
-By combining powerful backend services, secure payment processing, and an intuitive user interface, this mobile application sets a new standard for online fashion shopping. It offers convenience, security, and an enjoyable shopping experience, empowering users to explore the latest fashion trends and make purchases with confidence.
 
 ## Architecture
 
@@ -84,30 +69,10 @@ This architecture allows for a clear separation of responsibilities, makes it ea
   <img src="previews/splash_1.png" alt="" width="200">
 </div>
 
-#### Onboarding
-<div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/onboarding_1.png" alt="" width="200">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/onboarding_2.png" alt="" width="200">
-</div>
-
-#### Login, Signup
-<div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/login_or_signup_1.png" alt="" width="200">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/login_or_signup_2.png" alt="" width="200">
-</div>
-
 #### Main
 <div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/main_1.png" alt="" width="200">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/main_2.png" alt="" width="200">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/main_3.png" alt="" width="200">
+  <img src="previews/main_1.png" alt="" width="200">
 
-</div>
-
-#### Cart, Payments
-<div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/cart_payment_1.png" alt="" width="200">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/cart_payment_2.png" alt="" width="200">
 </div>
 
 #### Notifications
@@ -115,19 +80,9 @@ This architecture allows for a clear separation of responsibilities, makes it ea
   <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/notifications_1.png" alt="" width="200">
 </div>
 
-#### Orders
-<div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/orders_1.png" alt="" width="200">
-</div>
-
 #### Profile
 <div style="display: flex;">
   <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/profile_1.png" alt="" width="200">
-</div>
-
-#### Support, Chats
-<div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/chat.png" alt="" width="200">
 </div>
 
 ## Tech Stack
@@ -143,20 +98,6 @@ The Fx - Compyble App utilizes the following technologies:
 - [Retrofit2](https://github.com/square/retrofit) - Construct the REST APIs.
 - [Glide](https://github.com/bumptech/glide) - Loading images from network.
 - [Material-Components](https://github.com/material-components/material-components-android) - Material design components for building ripple animation, and CardView.
-- [**Stripe**](https://dashboard.stripe.com) - _Stripe_ is a suite of APIs powering online payment processing and commerce solutions for internet businesses of all sizes. Accept payments and scale faster..
-
-- [**Backend for Stripe**](https://glitch.com/~fernan-apps-shop-stripe) - For testing the Stripe mobile apps.
-
-
-- [**Appwrite Cloud**](https://cloud.appwrite.io/) **:** Unizim relies on Appwrite as its backend service.
-    - [**Authentication**](https://appwrite.io/docs/authentication)
-    - [Databases](https://appwrite.io/docs/client/databases)
-        - [Realtime](https://appwrite.io/docs/realtime)
-    - [Storage](https://appwrite.io/docs/client/storage)
-    - [Avatars](https://appwrite.io/docs/client/avatars)
-
-
-
 
 ## Download
 Go to the [Releases](https://github.com/FernanApps/FernanEcommerceShop/releases) to download the latest APK.

@@ -1,6 +1,8 @@
 package pe.fernan.apps.compyble.ui.screen.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -71,6 +73,7 @@ import pe.fernan.apps.compyble.domain.model.Slider
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
 import pe.fernan.apps.compyble.ui.composables.PageLoader
 import pe.fernan.apps.compyble.ui.composables.bounceClick
+import pe.fernan.apps.compyble.ui.composables.pressClickEffect
 import pe.fernan.apps.compyble.ui.navigation.Screen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 import pe.fernan.apps.compyble.utils.fixImage
@@ -87,6 +90,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
 
     val infoDialog by viewModel.infoDialog
 
+    val context = LocalContext.current
 
     if (data != null) {
 
@@ -111,15 +115,24 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                     Spacer(Modifier.size(15.dp))
                 }
                 Sliders(data?.sliders ?: listOf()){ slide ->
-                    val (category, subcategory) = viewModel.processAndExtract(slide)
+                    val paths = viewModel.processAndExtract(slide)
                     navController.navigate(
-                        route = Screen.Products.pass(
-                            category,
-                            subcategory
-                        )
+                        route = Screen.Products.pass(paths)
                     )
                 }
-                Advertisements(data?.advertisements ?: listOf())
+                Advertisements(data?.advertisements ?: listOf()){ advertisement ->
+
+                    if(advertisement.href.startsWith("/galeria")){
+                        val paths = viewModel.processAndExtract(advertisement.href)
+                        navController.navigate(Screen.Products.pass(paths))
+                    } else {
+                        val url = advertisement.href
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
+
+                    }
+
+                }
             }
 
             // TopProducts()
@@ -187,11 +200,12 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                                 viewModel.setCloseInfoDialog()
 
                                 // Check Navigate
-                                //if(!data!!.popup!!.href.startsWith("/galeria")){
+                                if(!data!!.popup!!.href.contains("galeria/producto")){
                                     // Products Screen Navigate
-                                    //navController.navigate(Screen.Products.pass())
+                                    val paths = viewModel.processAndExtract(data!!.popup!!.href)
+                                    navController.navigate(Screen.Products.pass(paths))
 
-                                //} else {
+                                } else {
                                     // /galeria/producto/65168e8cf0ffaae7a32f6d84/lavadora-oster-os-pwsmk0014b-14kg-negro?utm_campaign_store=P-031023-061023-oechsle
                                     // /galeria/producto/65168e8cf0ffaae7a32f6d84/lavadora-oster-os-pwsmk0014b-14kg-negro?utm_campaign_store=P-031023-061023-oechsle
 
@@ -209,7 +223,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                                             )
                                         )
                                     )
-                                //}
+                                }
 
 
                             },
@@ -499,7 +513,7 @@ fun ProductInformation(product: Product) {
 
 
 @Composable
-fun Advertisements(advertisements: List<Advertisement>) {
+fun Advertisements(advertisements: List<Advertisement>, advertisement: (Advertisement) -> Unit) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -507,7 +521,7 @@ fun Advertisements(advertisements: List<Advertisement>) {
     ) {
 
         items(advertisements) { ad ->
-            AdCard(advertisement = ad)
+            AdCard(advertisement = ad, advertisement)
             Spacer(modifier = Modifier.width(16.dp))
         }
     }
@@ -516,7 +530,7 @@ fun Advertisements(advertisements: List<Advertisement>) {
 
 
 @Composable
-fun AdCard(advertisement: Advertisement) {
+fun AdCard(advertisement: Advertisement, onItemClick: (Advertisement) -> Unit) {
 
     AsyncImage(
         model = advertisement.imageUrl.fixImage(),
@@ -525,7 +539,10 @@ fun AdCard(advertisement: Advertisement) {
             .width(220.dp)
             .height(100.dp)
             .aspectRatio(3f / 1.7f)
-            .clip(RoundedCornerShape(20.dp)),
+            .clip(RoundedCornerShape(20.dp))
+            .bounceClick {
+                onItemClick(advertisement)
+            },
         contentScale = ContentScale.FillBounds
     )
 
@@ -568,10 +585,10 @@ fun Sliders(sliders: List<Slider>, onItemClick: (Slider) -> Unit) {
                 modifier = Modifier.padding(25.dp)
             )
             Button(
-                modifier = Modifier.padding(start = 25.dp).bounceClick {
+                modifier = Modifier.padding(start = 25.dp).bounceClick(),
+                onClick = {
                     onItemClick(slider)
-                },
-                onClick = { }, shape = RoundedCornerShape(50.dp),
+                }, shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor
                 )

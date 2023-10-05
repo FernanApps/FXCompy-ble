@@ -106,11 +106,14 @@ class HomeViewModel @Inject constructor(
 
     // https://compy.pe/galeria?pagesize=24&page=1&sort=offer&category=Celulares&brand=APPLE
     // <a href="/galeria?pagesize=24&amp;page=1&amp;sort=offer&amp;category=Celulares&amp;brand=APPLE" class="btn btn-primary btn-rounded-more btn-primary-bluegray" banner-data="" banner-id="home-iphones" banner-name="iphones" banner-pos="Home - Banners Top - 1" banner-creative="/galeria?category=Celulares&amp;brand=APPLE" data-banner-ga4="" data-banner-id="home-iphones" data-banner-name="iphones" data-banner-pos="1" data-banner-format="Home categoría">Compara iPhones</a>
-    fun processAndExtract(slide: Slider): Path {
-        val href = slide.href
-        return Path("","")
+    fun processAndExtract(slide: Slider): List<Path> {
+        val pathMap = findPathsInUrl(slide.href)
+        return pathMap.map { Path(it.key, it.value) }
     }
-
+    fun processAndExtract(href: String): List<Path> {
+        val pathMap = findPathsInUrl(href)
+        return pathMap.map { Path(it.key, it.value) }
+    }
 
 }
 

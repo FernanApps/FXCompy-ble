@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
+import pe.fernan.apps.compyble.Constants
 import pe.fernan.apps.compyble.R
 import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
@@ -157,7 +158,7 @@ fun CategoryScreen(
 
             if (categorieSelected != null) {
                 LazyRow(Modifier.fillMaxWidth()) {
-                    items(categorieSelected?.subcategories ?: listOf()) { item ->
+                    items(categorieSelected?.subcategories ?: listOf()) { subCategory ->
                         val warmColor = warmColors.random()
                         Box(
                             modifier = Modifier
@@ -170,8 +171,12 @@ fun CategoryScreen(
                                     navController.navigate(
                                         route = Screen.Products.pass(
                                             Path(
+                                                Constants.keyCategory,
                                                 categorieSelected!!.category,
-                                                item
+                                            ),
+                                            Path(
+                                                Constants.keySubCategory,
+                                                subCategory
                                             )
                                         )
                                     )
@@ -180,7 +185,7 @@ fun CategoryScreen(
                         ) {
                             Text(
                                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 15.dp),
-                                text = item,
+                                text = subCategory,
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
                             )

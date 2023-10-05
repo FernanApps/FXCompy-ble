@@ -65,7 +65,7 @@ fun Modifier.bounceClick(scalePressed: Float = 0.70f, onClick: () -> Unit = {}) 
 
 fun Modifier.pressClickEffect(onClick: () -> Unit = {}) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
-    val ty by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0f else -20f)
+    val ty by animateFloatAsState(if (buttonState == ButtonState.Pressed) +20f else  0f )
 
     this
         .graphicsLayer {

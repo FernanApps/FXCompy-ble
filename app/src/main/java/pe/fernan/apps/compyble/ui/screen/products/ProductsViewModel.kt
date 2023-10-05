@@ -10,11 +10,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import pe.fernan.apps.compyble.Constants
 import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.useCase.GetProductsRemoteUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetSortKeysUseCase
 import pe.fernan.apps.compyble.utils.Path
 import javax.inject.Inject
+
+
 
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
@@ -22,12 +25,11 @@ class ProductsViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsRemoteUseCase
 ) : ViewModel() {
 
-    private val isFirstLoading: MutableState<Boolean> = mutableStateOf(false)
+    private val isFirstLoading: MutableState<Boolean> = mutableStateOf(
+        false)
 
     private var _paths: SnapshotStateMap<String, String> = mutableStateMapOf()
 
-    private val _category = mutableStateOf("")
-    private val _subCategory = mutableStateOf("")
 
     private var _sortKeySelected: MutableState<Pair<String, String>?> = mutableStateOf(null)
     val sortKeySelected get() = _sortKeySelected
@@ -77,8 +79,6 @@ class ProductsViewModel @Inject constructor(
         deleteOldList: Boolean = false
     ) {
         val currentPage = _page.intValue
-        println("getProducts in ViewModel Call ::: _category        ${_category.value}")
-        println("getProducts in ViewModel Call ::: _subCategory     ${_subCategory.value}")
         println("getProducts in ViewModel Call ::: _page            ${_page.intValue}")
         println("getProducts in ViewModel Call ::: _sortKeySelected ${_sortKeySelected.value}")
 
@@ -92,10 +92,8 @@ class ProductsViewModel @Inject constructor(
         // category=Computadoras
         // &
         // subcategory=Consolas
-        _paths["category"] = _category.value
-        _paths["subcategory"] = _subCategory.value
-        _paths["page"] = currentPage.toString()
-        _paths["sort"] = _sortKeySelected.value!!.first
+        _paths[Constants.keyPage] = currentPage.toString()
+        _paths[Constants.keySort] = _sortKeySelected.value!!.first
 
         viewModelScope.launch {
             getProductsUseCase(_paths).collect {
@@ -112,11 +110,6 @@ class ProductsViewModel @Inject constructor(
         //products = getProductsUseCase(category, subCategory, page, sort)
     }
 
-    fun setInitial(category: String, subcategory: String) {
-        _category.value = category
-        _subCategory.value = subcategory
-    }
-
     fun setSortSelected(position: Int) {
         if (!_sortKeys.isEmpty()) {
             _sortKeySelected.value = _sortKeys.getOrNull(position)
@@ -125,6 +118,7 @@ class ProductsViewModel @Inject constructor(
 
     fun setSortSelected(item: Pair<String, String>) {
         if (!_sortKeys.isEmpty()) {
+            _paths.put(Constants.keySort, item.first)
             _sortKeySelected.value = _sortKeys.find { it.first == item.first }
         }
     }
@@ -147,7 +141,6 @@ class ProductsViewModel @Inject constructor(
     fun setPaths(paths: List<Path>) {
         paths.forEach {
             _paths[it.key] = it.value
-
         }
     }
 }

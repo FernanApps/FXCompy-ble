@@ -225,6 +225,10 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
         paths: Map<String, String>
     ): Flow<List<Product>> = flow {
 
+        paths.forEach {
+            println("getProducts ::: ${it.key} = ${it.value}")
+        }
+
         val pathsMap = checkPath(paths)
 
         println("getProducts Repo init 0")
