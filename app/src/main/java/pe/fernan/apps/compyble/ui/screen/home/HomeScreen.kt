@@ -191,7 +191,7 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
             if (data?.popup != null) {
 
                 Dialog(onDismissRequest = {
-
+                    viewModel.setCloseInfoDialog()
                 }) {
                     Box(
                         modifier = Modifier

@@ -37,8 +37,10 @@ fun FavoriteScreen(
 ) {
 
     val listState = rememberLazyGridState()
-    val products by viewModel.products.collectAsStateWithLifecycle(emptyList())
 
+    //val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val products by viewModel.products.collectAsStateWithLifecycle(initialValue = emptyList())
 
     if (products.isNotEmpty()) {
 

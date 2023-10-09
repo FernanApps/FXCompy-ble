@@ -19,6 +19,7 @@ class ProductRepositoryImpl(private val productFavoriteDao: ProductFavoriteDao) 
 
     override fun getAllProducts(): Flow<List<Product>> =
         productFavoriteDao.getAllProducts().map { productsEntities ->
+            println("Update getAllProducts")
             productsEntities.map { it.toDomain() }
         }
 

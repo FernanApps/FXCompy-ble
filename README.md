@@ -61,18 +61,30 @@ This architecture allows for a clear separation of responsibilities, makes it ea
 #### Main
 <div style="display: flex;">
   <img src="previews/main_1.png" alt="" width="200">
-
 </div>
 
-#### Notifications
+#### Category
 <div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/notifications_1.png" alt="" width="200">
+  <img src="previews/category.png" alt="" width="200">
 </div>
 
-#### Profile
+
+#### Offers
 <div style="display: flex;">
-  <img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/profile_1.png" alt="" width="200">
+  <img src="previews/offers.png" alt="" width="200">
 </div>
+
+#### Favorite ❤️
+<div style="display: flex;">
+  <img src="previews/favorite.png" alt="" width="200">
+</div>
+
+#### Details
+<div style="display: flex;">
+  <img src="previews/details_1.png" alt="" width="200">
+  <img src="previews/details_2.png" alt="" width="200">
+</div>
+
 
 ## Tech Stack
 The Fx - Compyble App utilizes the following technologies:

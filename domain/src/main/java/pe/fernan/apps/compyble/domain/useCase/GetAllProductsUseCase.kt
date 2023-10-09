@@ -18,3 +18,9 @@ class DeleteProductLocalUseCase(private val repository: ProductRepository) {
     suspend operator fun invoke(product: Product) =
         repository.deleteProduct(product)
 }
+
+
+class GetProductByIdUseCase(private val repository: ProductRepository) {
+    suspend operator fun invoke(href: String) =
+        repository.getProductById(href)
+}

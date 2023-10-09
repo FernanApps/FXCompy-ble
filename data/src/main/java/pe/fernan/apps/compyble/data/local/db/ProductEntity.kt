@@ -1,5 +1,6 @@
 package pe.fernan.apps.compyble.data.local.db
 
+import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -15,8 +16,7 @@ data class ProductEntity(
     val discount: String,
     val price: String,
     val currency: String,
-    @PrimaryKey
-    val href: String
+    @PrimaryKey val href: String
 )
 
 fun ProductEntity.toDomain() = Product(
@@ -27,7 +27,7 @@ fun ProductEntity.toDomain() = Product(
     discount = discount,
     price = price,
     currency = currency,
-    href = href
+    href = Uri.decode(href)
 )
 
 
@@ -39,5 +39,5 @@ fun Product.toEntity() = ProductEntity(
     discount = discount,
     price = price,
     currency = currency,
-    href = href
+    href = Uri.encode(href)
 )

@@ -48,8 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
-import pe.fernan.apps.compyble.Constants
 import pe.fernan.apps.compyble.R
+import pe.fernan.apps.compyble.domain.Constants
 import pe.fernan.apps.compyble.domain.model.Category
 import pe.fernan.apps.compyble.ui.composables.HeaderTitle
 import pe.fernan.apps.compyble.ui.composables.PageLoader

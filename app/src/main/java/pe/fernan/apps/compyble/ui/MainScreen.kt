@@ -29,6 +29,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import pe.fernan.apps.compyble.R
+import pe.fernan.apps.compyble.domain.Constants
 import pe.fernan.apps.compyble.ui.navigation.PATHS_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.navigation.PRODUCTS_DETAILS_ARGUMENT_KEY
 import pe.fernan.apps.compyble.ui.navigation.ProductNavType
@@ -41,6 +43,7 @@ import pe.fernan.apps.compyble.ui.screen.details.DetailsScreen
 import pe.fernan.apps.compyble.ui.screen.offers.OffersScreen
 import pe.fernan.apps.compyble.ui.screen.products.ProductScreen
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
+import pe.fernan.apps.compyble.utils.Path
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +62,17 @@ fun MainScreen(navController: NavHostController) {
             ) {
                 composable(route = Screen.Home.route) { HomeScreen(navController) }
                 composable(route = Screen.Category.route) { CategoryScreen(navController) }
-                composable(route = Screen.Offers.route) { OffersScreen(navController) }
-                composable(route = Screen.Favorite.route) { FavoriteScreen(navController) }
+                composable(route = Screen.Offers.route) {
+                    //OffersScreen(navController)
+                    ProductScreen(
+                        titleId = R.string.offers,
+                        paths = listOf(Path(Constants.keySort, Constants.valueSortChange)),
+                        navController = navController
+                    )
+                }
+                composable(route = Screen.Favorite.route) {
+                    FavoriteScreen(navController)
+                }
                 composable(
                     route = Screen.Products.route,
                     arguments = listOf(
@@ -70,7 +82,11 @@ fun MainScreen(navController: NavHostController) {
                     )
                 ) { backStackEntry ->
                     Screen.Products.get(backStackEntry.arguments)?.let { paths ->
-                        ProductScreen(paths, navController)
+                        ProductScreen(
+                            titleId = R.string.shop,
+                            paths = paths,
+                            navController = navController
+                        )
                     }
                 }
                 composable(

@@ -9,6 +9,12 @@ import kotlinx.coroutines.flow.flow
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import pe.fernan.apps.compyble.domain.Constants.keyPage
+import pe.fernan.apps.compyble.domain.Constants.keyPageSize
+import pe.fernan.apps.compyble.domain.Constants.keySort
+import pe.fernan.apps.compyble.domain.Constants.valuePage
+import pe.fernan.apps.compyble.domain.Constants.valuePageSize
+import pe.fernan.apps.compyble.domain.Constants.valueSort
 import pe.fernan.apps.compyble.domain.model.Advertisement
 import pe.fernan.apps.compyble.domain.model.Banner
 import pe.fernan.apps.compyble.domain.model.Category
@@ -174,16 +180,16 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
     private fun checkPath(paths: Map<String, String>): MutableMap<String, String> {
         val pathsMap = paths.toMutableMap()
         // Checking
-        if(!pathsMap.containsKey("pagesize")){
-            pathsMap["pagesize"] = "24"
+        if(!pathsMap.containsKey(keyPageSize)){
+            pathsMap[keyPageSize] = valuePageSize
         }
 
-        if(!pathsMap.containsKey("page")){
-            pathsMap["page"] = "1"
+        if(!pathsMap.containsKey(keyPage)){
+            pathsMap[keyPage] = valuePage
         }
 
-        if(!pathsMap.containsKey("sort")){
-            pathsMap["sort"] = "offer"
+        if(!pathsMap.containsKey(keySort)){
+            pathsMap[keySort] = valueSort
         }
 
         return pathsMap
@@ -226,7 +232,7 @@ class CompyRepositoryImp(private val api: CompyApi) : CompyRepository {
     ): Flow<List<Product>> = flow {
 
         paths.forEach {
-            println("getProducts ::: ${it.key} = ${it.value}")
+            println("getProducts ::: paths ${it.key} = ${it.value}")
         }
 
         val pathsMap = checkPath(paths)

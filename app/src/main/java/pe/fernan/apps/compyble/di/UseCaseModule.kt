@@ -13,6 +13,7 @@ import pe.fernan.apps.compyble.domain.useCase.GetAllProductsFavoriteLocalUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetCategoriesUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetDetailsUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetHomeDataUseCase
+import pe.fernan.apps.compyble.domain.useCase.GetProductByIdUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetProductsRemoteUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetSortKeysUseCase
 import pe.fernan.apps.compyble.domain.useCase.SaveProductLocalUseCase
@@ -61,6 +62,11 @@ object UseCaseModule {
     @Provides
     fun provideDeleteProductLocalUseCase(repository: ProductRepository): DeleteProductLocalUseCase {
         return DeleteProductLocalUseCase(repository)
+    }
+
+    @Provides
+    fun provideGetProductByIdUseCase(repository: ProductRepository): GetProductByIdUseCase {
+        return GetProductByIdUseCase(repository)
     }
 
 

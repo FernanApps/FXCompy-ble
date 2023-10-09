@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import pe.fernan.apps.compyble.Constants
+import pe.fernan.apps.compyble.domain.Constants
 import pe.fernan.apps.compyble.domain.model.Product
 import pe.fernan.apps.compyble.domain.useCase.GetProductsRemoteUseCase
 import pe.fernan.apps.compyble.domain.useCase.GetSortKeysUseCase

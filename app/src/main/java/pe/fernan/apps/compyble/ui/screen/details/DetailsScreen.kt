@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,6 +75,7 @@ import pe.fernan.apps.compyble.ui.composables.LineChartEntity
 import pe.fernan.apps.compyble.ui.composables.LineChartVerticalTest
 import pe.fernan.apps.compyble.ui.composables.SegmentedControl
 import pe.fernan.apps.compyble.ui.composables.bounceClick
+import pe.fernan.apps.compyble.ui.screen.home.ProductState
 import pe.fernan.apps.compyble.ui.theme.FXCompybleTheme
 import pe.fernan.apps.compyble.utils.fixImage
 import java.text.SimpleDateFormat
@@ -85,12 +88,15 @@ fun DetailsScreen(
     navController: NavHostController,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    viewModel.setProduct(product)
     viewModel.getDetails(product.href)
 
     val context = LocalContext.current
 
     val details: Details? by viewModel.details.collectAsStateWithLifecycle(initialValue = null)
+
 
     println("DetailsScreen :::: $product")
 
@@ -133,7 +139,9 @@ fun DetailsScreen(
                 Box(
                     modifier = Modifier
                         .padding(0.dp)
-                        .bounceClick {}
+                        .bounceClick {
+                            viewModel.addOrRemoveFavorite()
+                        }
                 ) {
 
 
@@ -157,12 +165,14 @@ fun DetailsScreen(
                     )
 
                     Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
+                        imageVector = if (uiState.favorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                        tint = if (uiState.favorite) Color.Red else Color.Black,
                         contentDescription = null,
                         modifier = Modifier
                             .size(40.dp)
                             .align(Alignment.TopEnd)
-                            .padding(8.dp),
+                            .padding(8.dp)
+                        ,
                     )
 
                 }

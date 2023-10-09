@@ -1,9 +1,9 @@
 package pe.fernan.apps.compyble.ui.screen.products
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,8 +52,10 @@ import pe.fernan.apps.compyble.utils.Path
 
 
 // https://compy.pe/galeria?pagesize=24&page=1&sort=offer&category=Computadoras&subcategory=Consolas
+// https://compy.pe/galeria?pagesize=24&page=1&sort=change
 @Composable
 fun ProductScreen(
+    @StringRes titleId: Int,
     paths: List<Path>,
     navController: NavHostController,
     viewModel: ProductsViewModel = hiltViewModel()
@@ -92,7 +94,7 @@ fun ProductScreen(
                 .fillMaxSize()
                 .padding(horizontal = 15.dp, vertical = 25.dp),
         ) {
-            HeaderTitle(title = stringResource(id = R.string.shop))
+            HeaderTitle(title = stringResource(id = titleId))
             Spacer(modifier = Modifier.height(15.dp))
             Text(text = stringResource(id = R.string.order_by))
             Spacer(modifier = Modifier.height(5.dp))

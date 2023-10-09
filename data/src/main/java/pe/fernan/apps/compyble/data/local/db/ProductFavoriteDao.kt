@@ -11,9 +11,6 @@ import pe.fernan.apps.compyble.data.Constants.tableProduct
 @Dao
 interface ProductFavoriteDao {
 
-    @Query("SELECT * FROM $tableProduct")
-    fun getAllProducts(): Flow<List<ProductEntity>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllProducts(product: List<ProductEntity>)
 
@@ -25,6 +22,9 @@ interface ProductFavoriteDao {
 
     @Query("SELECT * FROM $tableProduct WHERE href = :href")
     fun getProductById(href: String): Flow<ProductEntity?>
+
+    @Query("SELECT * FROM $tableProduct")
+    fun getAllProducts(): Flow<List<ProductEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveProduct(product: ProductEntity)
