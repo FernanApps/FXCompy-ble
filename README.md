@@ -25,7 +25,7 @@
 
 ## Architecture
 
-![Architecture](https://miro.medium.com/v2/resize:fit:750/format:webp/1*VhRdBj1kXY3fwXDEDxoykg.png)
+![Architecture](https://miro.medium.com/v2/resize:fit:350/format:webp/1*VhRdBj1kXY3fwXDEDxoykg.png)
 
 ### Structure
 This architecture allows for a clear separation of responsibilities, makes it easier to test and maintain code, and allows layers to be independent and can be modified or replaced without affecting other layers.
