@@ -16,23 +16,12 @@
 
 ## **Introduction**
 <p align="center">
-<img src="https://raw.githubusercontent.com/FernanApps/FernanEcommerceShop/master/previews/banner.png"/>
+<img src="previews/android.png"/>
 </p>
 
 <p align="center">  
-🛒 Fx - Compyble: Welcome to our e-commerce application! We present a cutting-edge platform where you can explore and purchase a wide range of fashionable clothing and accessories, all from the comfort of your home. Leveraging the power of Appwrite as our backend solution, we have seamlessly integrated user management, product catalog, and order tracking features. To ensure secure and hassle-free transactions, we have integrated Stripe payment services, providing a robust and reliable payment gateway. Join us today for an immersive shopping experience, where fashion meets convenience at your fingertips. Be part of our journey as we revolutionize the way you shop online!".
+🛒 Fx - Compyble: It is based on the compy.pe website with the proposal to continue learning jetpack compose.
 </p>
-
-
-## Description of Project
-
-The project at hand is a mobile application developed for a hackathon event, aiming to revolutionize the fashion e-commerce industry by providing a user-friendly and secure shopping experience with simplified online payments. The application was built using AppWrite, a powerful backend-as-a-service platform, and integrated with Stripe, a leading online payment gateway.
-
-### Features
-
-- **Efficient Data Storage:** AppWrite efficiently stores and manages data, providing a seamless user experience. It optimizes data retrieval and storage, resulting in fast response times and minimal downtime.
-- **Product Exploration:** Users can explore a vast selection of fashion items, including the latest trends, popular styles, and exclusive offers. The app provides intuitive search and filtering functionalities to help users discover their desired products easily.
-- **Notifications:** Users receive timely notifications about their orders, including order confirmations, shipment updates, and delivery notifications. These notifications keep users informed and engaged throughout the shopping experience.
 
 ## Architecture
 
