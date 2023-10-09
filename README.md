@@ -118,7 +118,6 @@ Go to the [Releases](https://github.com/FernanApps/FernanEcommerceShop/releases)
 - [Retrofit2](https://github.com/square/retrofit) - Construct the REST APIs.
 - [Glide](https://github.com/bumptech/glide) - Loading images from network.
 - [Material-Components](https://github.com/material-components/material-components-android) - Material design components for building ripple animation, and CardView.
-- [Stripe](https://dashboard.stripe.com) - _Stripe_ is a suite of APIs powering online payment processing and commerce solutions for internet businesses of all sizes. Accept payments and scale faster..
 
 
 ## Find this repository useful? :heart:
