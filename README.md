@@ -104,7 +104,7 @@ The Fx - Compyble App utilizes the following technologies:
 Go to the [Releases](https://github.com/FernanApps/FernanEcommerceShop/releases) to download the latest APK.
 
 ## Preview
-<img src="previews/preview.mp4" height="320" />
+<img src="previews/preview.gif" height="320" />
 
 ## Tech stack & Open-source libraries
 - Minimum SDK level 21
